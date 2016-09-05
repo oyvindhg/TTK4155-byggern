@@ -9,7 +9,8 @@
 #ifndef UART_DRIVER_H_
 #define UART_DRIVER_H_
 
-void put_char(char c);
-char get_char();
+void UART_init(unsigned long clock_speed);
+int put_char(char c);
+unsigned char get_char();
 
 #endif /* MAX233_DRIVER_H_ */

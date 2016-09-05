@@ -12,16 +12,15 @@
 #include <avr/io.h>
 #include "bit_macros.h"
 
-#define BAUD 9600 //Baud rate = symbols pr second
+#define BAUD 9600 //Baud rate = symbols pr second. Passende med 9600?
 
-void UART_init(unsigned int clock_speed){
-	/*
-	Trengs dette?
-	DDRD |= (0 << PD0)			//0 sets port PD0 to output mode. PD1 is transmitter.
-	DDRD |= (1 << PD1)			//1 sets port PD1 to input mode. PD2 is receiver.
-	*/
+void UART_init(unsigned long clock_speed){
 	
-	unsigned char ubrr = clock_speed / (BAUD * 16) - 1;	//USART Baud Rate Register 
+	//Er dette riktig?
+	clear_bit(DDRD,PD0);			//0 sets pin PD0 (RXD0) to input mode. PD0 is receiver.
+	set_bit(DDRD,PD1);				//1 sets pin PD1 (TXD0) to output mode. PD1 is transmitter.
+	
+	unsigned char ubrr = clock_speed / (BAUD * 16) - 1;	//USART Baud Rate Register. Alltid et helt tall? 
 	
 	UBRR0H = ubrr >> 8;			// Save the most significant bits (4 most sign. bits out of 12 bits)
 	UBRR0L = ubrr;				// Save the least sign. bits (8 least sign. bits)
@@ -34,7 +33,7 @@ void UART_init(unsigned int clock_speed){
 	clear_bit(UCSR0C,UMSEL0);	// UMSEL: 0 = Asynchronous operation, not synchronous
 	set_bit(UCSR0C,USBS0);		// USBS: 1 = Use 2 stop bits, not 1
 	set_bit(UCSR0C,UCSZ00);		// UCSZ0: 1
-	set_bit(UCSR0C,UCSZ10);		// UCSZ1: 1 = Use 8 bits (11 binary) for each character
+	set_bit(UCSR0C,UCSZ10);		// UCSZ1: 1		-	 UCSZ0 and UCSZ1 defines 8 bits (11 binary) for each character
 }
 
 int put_char(unsigned char c){
