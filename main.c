@@ -5,17 +5,23 @@
  *  Author: Whiskey dicks
  
  Crystal oscillator frequency: 4.9152 MHz
+
+ Tip for debug of a variable: Use volatile when initializing the variable, then press Start Debugging and Break. Then add the variable to the watch-list after right clicking it. Now it can be viewed in debug mode.
  
- Use external reset?
- DIP eller SO?
- Klokka føkka - 1000 ms git 400 ms periode
- 
- Hva er MAXIM233??
- 
- */ 
+
+SPØRSMÅL:
+
+Decoupling capacitors. Er de blå ok?
+
+Low-pass filter on ALE signal. Schematic on STK501???
+
+SRAM capacitors page?
+
+
+*/ 
 
 #ifndef F_CPU
-#define F_CPU 4915200UL	//Settes den i hele prosjektet?
+#define F_CPU 4915200UL	//This is just a macro, it has no data type.
 #endif
 
 #include <avr/io.h>
@@ -27,25 +33,37 @@
 //#define DDRB |= (1 << PB1)		// Data direction register B. 1 sets port PB1 to output mode.
 //Funker dette? Ser ikke forskjell
 
-int main(void) {
+void day1(void) {
 	
-	UART_init(F_CPU);
+	put_char(get_char() + 1);		//Returns the character next in the alphabet.
+
+	printf("hello world!\n");
+	
+}
+
+void day2(void) {
+
+	
+}
+
+int main(void) {
+
+	unsigned long clock_speed = F_CPU;
+	UART_init(clock_speed);
+	
+	//DDRA = 0xFF;			//Er dette nødvendig når vi enabler etterpå? Vil ikke dette bli overskrevet (ref. datablad) når vi enabler nedenfor? NEI
+
+	set_bit(MCUCR,SRE);		//Enable External Memory Interface. PE1 is automatically controlled as this command takes control.
+	set_bit(SFIOR,XMM2);	//Remove 4 Most Significant Bits from address so that JTAG interface doesn't crash
+
+	volatile char* ext_ram = 0x1800;	//Create a pointer to the array of all addresses we will write to. SRAM starting at 0x1800. ext_ram[0x7FF] is maximum because 0x1800 + 0x7FF = 0x1FFF! 
 	
 	while(1) {
-	//Test klokkefart	
-	/*	_delay_ms(1000);			//ms
-		
-		toggle_bit(PORTB, PB1); */
-		
-		_delay_ms(500);
-
-		//if (get_char() == 0x00){
-		//	toggle_bit(PORTB, PB1);
-		//	}
-
-		put_char('v');
-		_delay_ms(100);
-		put_char('a');
+		ext_ram[0x05] = 0xFF;		//Set data 0xFF to address 0x05. Each address points to a 8-bit register.
+		_delay_ms(200);
+		ext_ram[0x01] = 0x00;
+		_delay_ms(200);
 	}
-	//return 0;
+	
+	return 0;
 }

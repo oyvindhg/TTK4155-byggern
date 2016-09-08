@@ -9,8 +9,11 @@
 #ifndef UART_DRIVER_H_
 #define UART_DRIVER_H_
 
+#include <stdio.h>
+
 void UART_init(unsigned long clock_speed);
 int put_char(unsigned char c);
-unsigned char get_char();
+int get_char(void);
+void printBaud(void);
 
 #endif /* MAX233_DRIVER_H_ */
