@@ -43,7 +43,9 @@ int main(void) {
 		//	toggle_bit(PORTB, PB1);
 		//	}
 
-		put_char('c');
+		put_char('v');
+		_delay_ms(100);
+		put_char('a');
 	}
 	//return 0;
 }
