@@ -23,7 +23,7 @@ void UART_init(unsigned long clock_speed){
 	//set_bit(DDRD,PD1);				//1 sets pin PD1 (TXD0) to output mode. PD1 is transmitter.
 
 	unsigned long baud = BAUD;
-	unsigned char ubrr = (clock_speed / (baud * 16)) - 1;
+	unsigned char ubrr = (clock_speed / (baud * 16)) - 1;	//Should be, and is, 31
 	
 	/* Set baud rate */
 	UBRR0H = ubrr >> 8;			// Save the most significant bits (4 most sign. bits out of 12 bits)

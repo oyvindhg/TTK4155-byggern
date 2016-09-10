@@ -33,7 +33,8 @@ SRAM capacitors page?
 //#define DDRB |= (1 << PB1)		// Data direction register B. 1 sets port PB1 to output mode.
 //Funker dette? Ser ikke forskjell
 
-void day1(void) {
+
+void exercise1(void) {
 	
 	put_char(get_char() + 1);		//Returns the character next in the alphabet.
 
@@ -41,7 +42,8 @@ void day1(void) {
 	
 }
 
-void day2(void) {
+
+void exercise2(void) {
 
 	
 }
@@ -51,18 +53,16 @@ int main(void) {
 	unsigned long clock_speed = F_CPU;
 	UART_init(clock_speed);
 	
-	//DDRA = 0xFF;			//Er dette nødvendig når vi enabler etterpå? Vil ikke dette bli overskrevet (ref. datablad) når vi enabler nedenfor? NEI
-
 	set_bit(MCUCR,SRE);		//Enable External Memory Interface. PE1 is automatically controlled as this command takes control.
 	set_bit(SFIOR,XMM2);	//Remove 4 Most Significant Bits from address so that JTAG interface doesn't crash
 
 	volatile char* ext_ram = 0x1800;	//Create a pointer to the array of all addresses we will write to. SRAM starting at 0x1800. ext_ram[0x7FF] is maximum because 0x1800 + 0x7FF = 0x1FFF! 
-	
+	ext_ram[0x7FF] = 0xFF;
 	while(1) {
-		ext_ram[0x05] = 0xFF;		//Set data 0xFF to address 0x05. Each address points to a 8-bit register.
-		_delay_ms(200);
-		ext_ram[0x01] = 0x00;
-		_delay_ms(200);
+		//ext_ram[0x05] = 0xFF;		//Set data 0xFF to address 0x05. Each address points to a 8-bit register.
+		//_delay_ms(200);
+		//ext_ram[0x01] = 0x00;
+		//_delay_ms(200);
 	}
 	
 	return 0;
