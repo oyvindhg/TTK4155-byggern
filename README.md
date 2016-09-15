@@ -19,7 +19,7 @@ SRAM Data Memory
 SRAM Adress choice
 
 	We have chosen to set bit A0 (most significant bit) of the adress to constant ground. This is because
-	the adress is not needed. We only need 2048 adresses for our SRAM. removing A0 gives us exactly (2^11).
+	the adress is not needed. We only need 2048 adresses for our SRAM. Removing A0 gives us exactly (2^11).
 	It is still included in the GAL-logic however, for correct decoding. If we need to include more sram
 	in later stages of the project / future applications, then this adress-bit would need to be transferred 
 	from our Atmega162
