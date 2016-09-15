@@ -24,11 +24,13 @@ SRAM capacitors page?
 #define F_CPU 4915200UL	//This is just a macro, it has no data type.
 #endif
 
-#include <avr/io.h>
+#include <avr/io.h>		//This is also included in UART_driver.h. Should we remove it from here?
 #include <util/delay.h>
 
 #include "bit_macros.h"
 #include "UART_driver.h"
+#include "XMEM.h"
+#include "SRAM_driver.h"
 
 //#define DDRB |= (1 << PB1)		// Data direction register B. 1 sets port PB1 to output mode.
 //Funker dette? Ser ikke forskjell
@@ -49,20 +51,31 @@ void exercise2(void) {
 }
 
 int main(void) {
+	
+	
+	char data = 'c';
+	volatile char* ext_ram = 0x1000;
 
 	unsigned long clock_speed = F_CPU;
-	UART_init(clock_speed);
 	
-	set_bit(MCUCR,SRE);		//Enable External Memory Interface. PE1 is automatically controlled as this command takes control.
-	set_bit(SFIOR,XMM2);	//Remove 4 Most Significant Bits from address so that JTAG interface doesn't crash
-
-	volatile char* ext_ram = 0x1800;	//Create a pointer to the array of all addresses we will write to. SRAM starting at 0x1800. ext_ram[0x7FF] is maximum because 0x1800 + 0x7FF = 0x1FFF! 
-	ext_ram[0x7FF] = 0xFF;
+	UART_init(clock_speed);
+	XMEM_init();
+	
+	SRAM_test();
+	
 	while(1) {
-		//ext_ram[0x05] = 0xFF;		//Set data 0xFF to address 0x05. Each address points to a 8-bit register.
-		//_delay_ms(200);
-		//ext_ram[0x01] = 0x00;
-		//_delay_ms(200);
+		ext_ram[0x000] = data;
+		//printf("OLED command\n");
+		_delay_ms(3000);
+		ext_ram[0x300] = data;
+		//printf("OLED data\n");
+		_delay_ms(3000);
+		ext_ram[0x400] = data;
+		//printf("ADC\n");
+		_delay_ms(3000);
+		ext_ram[0x800] = data;
+		//printf("SRAM\n");
+		_delay_ms(3000);
 	}
 	
 	return 0;

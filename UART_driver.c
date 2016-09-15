@@ -9,8 +9,8 @@
 
 // UART = Universal Asynchronous Receiver/Transmitter
 
-#include <avr/io.h>
 #include <stdio.h>
+#include <avr/io.h>
 #include "bit_macros.h"
 #include "UART_driver.h"
 
