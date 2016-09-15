@@ -14,6 +14,13 @@ SRAM Data Memory
 	(this figure shows the wave forms without wait-states).
 
 	When ALE goes from high to low, there is a valid address on AD7:0. ALE is low during a data transfer.
+	
+SRAM Adress choice
+	We have chosen to set bit A0 (the most significant bit) of the adress to constant ground. This is because
+	the adress is not needed. We only need 2048 adresses for our SRAM, and removing A0 gives us exactly (2^11).
+	It is still included in the GAL-logic however, for correct decoding. If we need to include more sram
+	in later stages of the project / future applications, then this adress-bit would need to be transferred 
+	from our Atmega162
 
 SFIOR - Special Function IO Register
 
@@ -23,4 +30,3 @@ SFIOR - Special Function IO Register
 	the lines. Writing XMBK to zero disables the Bus Keeper. XMBK is not qualified with SRE,
 	so even if the XMEM interface is disabled, the bus keepers are still activated as long as XMBK is
 	one.
-
