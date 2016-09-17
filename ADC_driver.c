@@ -12,15 +12,46 @@
 #define ADC_FIRST_ADDRESS 0x1400	//This is just a macro, it has no data type.
 #endif
 
-int ADC_write(uint16_t address, char data){
+void ADC_init(void){
 	
-	if (address > 0x3FF){
-		printf("ADC error, trying to write to an address that is too big\n");
-		return EXIT_FAILURE;
+	//INITIALIZE INTERRUPT ON PIN 
+	
+	// Button input
+	DDRE &= ~(1<<PE0);					// Bruke Int1 her??
+	// Disable global interrupts
+	cli();
+	// Interrupt on rising edge PE0
+	EMCUCR |= (1<<ISC2);
+	// Enable interrupt on PE0
+	GICR |= (1<<INT2);
+	// Enable global interrupts
+	sei();
+	
+	
+}
+
+
+void ADC_start_read(int channel){
+	
+	volatile char* ext_adc = ADC_FIRST_ADDRESS;	//Create a pointer to the array of all addresses we will write to. SRAM starting at 0x1800. ext_ram[0x7FF] is maximum because 0x1800 + 0x7FF = 0x1FFF!
+	
+	address = 0x000;
+	
+	switch case(channel){
+		case 1:
+			data = 0x04;
+			break;
+		case 2:
+			data = 0x05;
+			break;
+		case 3:
+			data = 0x06;
+			break;
+		default:
+			printf("Not valid channel");
+			return EXIT_FAILURE;
 	}
 	
-	volatile char* ext_ram = ADC_FIRST_ADDRESS;	//Create a pointer to the array of all addresses we will write to. ADC starting at 0x1400. ext_ram[0x3FF] is maximum because 0x1400 + 0x3FF = 0x17FF!
-	ext_ram[address] = data;
+	ext_adc[address] = data;
 	
-	return 0;
 }

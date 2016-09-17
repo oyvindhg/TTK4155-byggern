@@ -9,8 +9,8 @@
 #ifndef ADC_H_
 #define ADC_H_
 
-int ADC_write(uint16_t address, char data);
+void ADC_init(void);
 
-
+void ADC_start_read(int channel);
 
 #endif /* ADC_H_ */
