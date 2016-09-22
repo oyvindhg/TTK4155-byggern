@@ -11,6 +11,10 @@
 
 void ADC_init(void);
 
-void ADC_start_read(int channel);
+typedef enum {CHANNEL1, CHANNEL2, CHANNEL3, CHANNEL4} channel_t; //Begynner enum på 0 eller 1? Må vi definere selv?
+
+char ADC_get_data(void);
+
+void ADC_start_read(channel_t channel);
 
 #endif /* ADC_H_ */

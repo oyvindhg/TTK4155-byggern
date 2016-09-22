@@ -31,38 +31,27 @@ SRAM capacitors page?
 #include "UART_driver.h"
 #include "XMEM.h"
 #include "SRAM_driver.h"
-
-//#define DDRB |= (1 << PB1)		// Data direction register B. 1 sets port PB1 to output mode.
-//Funker dette? Ser ikke forskjell
+#include "ADC_driver.h"
+#include "joystick_driver.h"
 
 
 void exercise1(void) {
 	
 	put_char(get_char() + 1);		//Returns the character next in the alphabet.
 
-	printf("hello world!\n");
+	printf("\nhello world!\n");
 	
 }
 
 
 void exercise2(void) {
-
-	
-}
-
-int main(void) {
-	
 	
 	char data = 'c';
-	volatile char* ext_ram = 0x1000;
-
-	unsigned long clock_speed = F_CPU;
 	
-	UART_init(clock_speed);
-	XMEM_init();
+	volatile char* ext_ram = 0x1000;
 	
 	SRAM_test();
-	
+
 	while(1) {
 		ext_ram[0x000] = data;
 		//printf("OLED command\n");
@@ -77,6 +66,27 @@ int main(void) {
 		//printf("SRAM\n");
 		_delay_ms(3000);
 	}
+	
+}
+
+int main(void) {
+	
+	// -------------Define variables-------------
+	
+	int prescaler_joystick_timer = 1024;
+	
+	// ------------------------------------------
+
+	unsigned long clock_speed = F_CPU;
+	
+	UART_init(clock_speed);
+	XMEM_init();
+	
+	ADC_init();
+	
+	joystick_init(prescaler_joystick_timer);
+	
+	while(1){};
 	
 	return 0;
 }
