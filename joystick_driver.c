@@ -8,75 +8,59 @@
 #include <stdlib.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
+#include <stdint.h>
 
 #include "joystick_driver.h"
 #include "ADC_driver.h"
 #include "bit_macros.h"
-#include <util/delay.h>
 
 
 volatile joystick_position_t position;
 volatile sliders_position_t sliders;
+volatile state contr_state;
 
-volatile state contr_state= JOY_X;
+volatile int joy_x_V_min = 0;
+volatile int joy_x_V_max = 255;
+volatile int joy_y_V_min = 0;
+volatile int joy_y_V_max = 255;
 
-volatile float joy_x_V_min = 0;
-volatile float joy_x_V_max = 255;
-volatile float joy_y_V_min = 0;
-volatile float joy_y_V_max = 255;
+volatile int x_offset;
+volatile int y_offset;
 
-volatile float x_offset = 0;
-volatile float y_offset = 0;
+volatile int slide_left_V_min = 0;
+volatile int slide_left_V_max = 255;
+volatile int slide_right_V_min = 0;
+volatile int slide_right_V_max = 255;
 
-
-volatile float slide_left_V_min = 0;
-volatile float slide_left_V_max = 255;
-volatile float slide_right_V_min = 0;
-volatile float slide_right_V_max = 255;
 
 // timer0 overflow
 ISR(TIMER0_OVF_vect){
-	
-	
+
 	channel_t channel;
-	
-	float data = (float)get_ADC_data();
-	
+	int32_t data = (int32_t)get_ADC_data();
 	switch(contr_state){
-		case(JOY_X):
-			position.x = (int) ( (data-x_offset) / (joy_x_V_max - joy_x_V_min) * 200);
-			contr_state = JOY_Y;
+		case(JOYSTICK_X):
+			position.x = ((data-x_offset)*200 )/ (joy_x_V_max - joy_x_V_min);
+			contr_state = JOYSTICK_Y;
 			channel = CHANNEL2;
-			if (position.x>=13270)
-				printf("S");
-			else if (position.x <= 40 && position.x >=-40)
-				printf("N");
- 			else
- 				printf("M");
 			break;
-		case(JOY_Y):
-			position.y = (int) ( (data-y_offset) / (joy_y_V_max - joy_y_V_min) * 200);
+		case(JOYSTICK_Y):
+			position.y = ((data-y_offset)*200 )/ (joy_y_V_max - joy_y_V_min);
 			contr_state = LEFT_SLIDER;
 			channel = CHANNEL3;
-// 			if (position.y>=40)
-// 				printf("s");
-// 			else if (position.y <= 40 && position.y >=-40)
-// 				printf("n");
-// 			else
-// 				printf("m");
 			break;
 		case(LEFT_SLIDER):
-			sliders.left = (int) (data / (slide_left_V_max - slide_left_V_min)  * 200 - 100);
+			sliders.left = (data * 200)/ (slide_left_V_max - slide_left_V_min)  - 100;
 			contr_state = RIGHT_SLIDER;
 			channel = CHANNEL4;
 			break;
 		case(RIGHT_SLIDER):
-			sliders.right = (int) (data / (slide_right_V_max - slide_right_V_min) * 200 - 100);
-			contr_state = JOY_X;
+			sliders.right = (data * 200) / (slide_right_V_max - slide_right_V_min) - 100;
+			contr_state = JOYSTICK_X;
 			channel = CHANNEL1;
 			break;
-	}
-			
+}
 	ADC_start_read(channel);
 }
 
@@ -84,11 +68,11 @@ void joystick_auto_calibrate(){
 	
 	ADC_start_read(CHANNEL1);
 	_delay_ms(1);
-	x_offset = (float)get_ADC_data();
+	x_offset = (int)get_ADC_data();
 	
 	ADC_start_read(CHANNEL2);
 	_delay_ms(1);
-	y_offset = (float)get_ADC_data();
+	y_offset = (int)get_ADC_data();
 	
 }
 
@@ -99,6 +83,10 @@ void joystick_init(int prescaler){
 	clear_bit(DDRB, PB1);
 	clear_bit(DDRB, PB2);
 	
+	joystick_auto_calibrate();
+		
+	contr_state = JOYSTICK_X;
+	ADC_start_read(CHANNEL1);
 	
 	//-------------INITIALIZE TIMER INPUT-----------------
 	
@@ -120,11 +108,7 @@ void joystick_init(int prescaler){
 	sei();
 	
 	//---------------------------------------------------
-	
-	joystick_auto_calibrate();
-	
-	contr_state = JOY_X;
-	ADC_start_read(CHANNEL1);
+
 
 }
 
@@ -156,6 +140,29 @@ joystick_position_t joystick_getPosition() {
 
 
 joystick_direction_t joystick_getDirection() {
-	return LEFT;
+	int x = position.x;
+	int y = position.y;
+	if (abs(x) >= abs(y)){
+		if (abs(x) < 10){
+			return NEUTRAL;
+		}
+		else if (x < 0){
+			return LEFT;
+		}
+		else {
+			return RIGHT;
+		}
+	} 
+	else{
+		if (abs(y) < 10){
+			return NEUTRAL;
+		}
+		else if (y < 0){
+			return DOWN;
+		}
+		else {
+			return UP;
+		}
+	}
 }
 

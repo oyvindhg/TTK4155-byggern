@@ -86,6 +86,7 @@ int main(void) {
 	
 	joystick_init(prescaler_joystick_timer);
 	
+	
 	while(1){};
 	
 	return 0;

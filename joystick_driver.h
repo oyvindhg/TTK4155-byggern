@@ -11,7 +11,7 @@
 void joystick_init(int prescaler);
 void joystick_manual_calibrate(void);
 
-typedef enum {JOY_X, JOY_Y, LEFT_SLIDER, RIGHT_SLIDER} state;
+typedef enum {JOYSTICK_X, JOYSTICK_Y, LEFT_SLIDER, RIGHT_SLIDER} state;
 
 typedef enum {JOYSTICKBUTTON, LBUTTON, RBUTTON} usb_button_t;
 
