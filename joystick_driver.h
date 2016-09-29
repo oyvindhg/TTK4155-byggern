@@ -27,8 +27,10 @@ typedef struct {
 
 typedef enum {LEFT, RIGHT, UP, DOWN, NEUTRAL} joystick_direction_t;
 	
-joystick_position_t joystick_getPosition(void);
-joystick_direction_t joystick_getDirection(void);
+joystick_position_t joystick_get_position(void);
+joystick_direction_t joystick_get_direction(void);
 
+int slider_get_left(void);
+int slider_get_right(void);
 
 #endif /* JOYSTICK_DRIVER_H_ */

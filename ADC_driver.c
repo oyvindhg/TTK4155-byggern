@@ -13,17 +13,23 @@
 #include "ADC_driver.h"
 #include "joystick_driver.h"
 
-#ifndef ADC_FIRST_ADDRESS
-#define ADC_FIRST_ADDRESS 0x1400	//This is just a macro, it has no data type.
+#ifndef ADC_ADDRESS
+#define ADC_ADDRESS 0x1400
 #endif
 
-volatile char* ext_adc = ADC_FIRST_ADDRESS;	//Create a pointer to the array of all addresses we will write to. ADC starting at 0x1400.
+volatile char* ext_adc = ADC_ADDRESS;	//Create a pointer to the array of all addresses we will write to. ADC starting at 0x1400.
 volatile char ADC_data;
+
+/*
+Chip select settes lav hele tiden, kan det være et problem?
+*/
 
 //volatile int new_data = 0;
 
 ISR(INT1_vect){
+	
 	ADC_data = ext_adc[0x00];
+	
 //	new_data = 1;
 }
 
@@ -33,6 +39,7 @@ void ADC_init(void){
 
 	// Button input
 	clear_bit(DDRD, PD3);
+	set_bit(PORTD, PD3);	//Set pull-up resistor
 	// Disable global interrupts
 	cli();
 	// Interrupt on falling edge PD3
@@ -48,6 +55,8 @@ char get_ADC_data(void){
 // 	printf("hei\n");
 // 	while(!new_data){printf("DEN ER FOR TREIG");}
 // 	new_data = 0;
+	//printf("get data\n");
+	//printf("Return data %d\n",ADC_data);
 	return ADC_data;
 }
 

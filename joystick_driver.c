@@ -36,19 +36,24 @@ volatile int slide_right_V_max = 255;
 
 // timer0 overflow
 ISR(TIMER0_OVF_vect){
-
+	//printf("\t\toverflow\n");
 	channel_t channel;
-	int32_t data = (int32_t)get_ADC_data();
+	char data_char = get_ADC_data();
+	int32_t data = (int32_t)data_char;
+	
+	//printf("Data read: %d\n",extraVar);
 	switch(contr_state){
 		case(JOYSTICK_X):
 			position.x = ((data-x_offset)*200 )/ (joy_x_V_max - joy_x_V_min);
 			contr_state = JOYSTICK_Y;
 			channel = CHANNEL2;
+			//printf("x: %d", position.x);
 			break;
 		case(JOYSTICK_Y):
 			position.y = ((data-y_offset)*200 )/ (joy_y_V_max - joy_y_V_min);
 			contr_state = LEFT_SLIDER;
 			channel = CHANNEL3;
+			//printf("\ty: %d\n", position.y);
 			break;
 		case(LEFT_SLIDER):
 			sliders.left = (data * 200)/ (slide_left_V_max - slide_left_V_min)  - 100;
@@ -60,7 +65,7 @@ ISR(TIMER0_OVF_vect){
 			contr_state = JOYSTICK_X;
 			channel = CHANNEL1;
 			break;
-}
+	}
 	ADC_start_read(channel);
 }
 
@@ -78,10 +83,11 @@ void joystick_auto_calibrate(){
 
 void joystick_init(int prescaler){
 	
-	// Button inputs
-	clear_bit(DDRB, PB0);
-	clear_bit(DDRB, PB1);
-	clear_bit(DDRB, PB2);
+	// Button inputs:
+	clear_bit(DDRB, PB0);	//Joystick button
+	set_bit(PORTB, PB0);		//Set pull-up resistor
+	clear_bit(DDRB, PB1);	//Right button
+	clear_bit(DDRB, PB2);	//Left button
 	
 	joystick_auto_calibrate();
 		
@@ -109,9 +115,7 @@ void joystick_init(int prescaler){
 	
 	//---------------------------------------------------
 
-
 }
-
 
 void joystick_manual_calibrate(){
 	return;
@@ -121,11 +125,13 @@ int joystick_button(usb_button_t button){
 	
 	switch (button) {
 		case JOYSTICKBUTTON :
-			return test_bit(DDRB, PB0);
+			//printf("joy: %d\n", !test_bit(PORTB, PB0));
+			return !test_bit(PINB, PINB0);
 		case LBUTTON :
-			return test_bit(DDRB, PB1);
+			return test_bit(PINB, PINB2);
 		case RBUTTON :
-			return test_bit(DDRB, PB2);
+			//printf("R: %d\n", test_bit(DDRB, PB2));
+			return test_bit(PINB, PINB1);
 		default:
 			printf("Not valid button");
 			return EXIT_FAILURE;
@@ -134,12 +140,12 @@ int joystick_button(usb_button_t button){
 }
 
 
-joystick_position_t joystick_getPosition() {
+joystick_position_t joystick_get_position() {
 	return position;
 }
 
 
-joystick_direction_t joystick_getDirection() {
+joystick_direction_t joystick_get_direction() {
 	int x = position.x;
 	int y = position.y;
 	if (abs(x) >= abs(y)){
@@ -166,3 +172,9 @@ joystick_direction_t joystick_getDirection() {
 	}
 }
 
+int slider_get_left(void){
+	return sliders.left;
+}
+int slider_get_right(void){
+	return sliders.right;
+}

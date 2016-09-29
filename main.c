@@ -33,6 +33,7 @@ SRAM capacitors page?
 #include "SRAM_driver.h"
 #include "ADC_driver.h"
 #include "joystick_driver.h"
+#include "OLED_driver.h"
 
 
 void exercise1(void) {
@@ -42,7 +43,6 @@ void exercise1(void) {
 	printf("\nhello world!\n");
 	
 }
-
 
 void exercise2(void) {
 	
@@ -69,6 +69,35 @@ void exercise2(void) {
 	
 }
 
+void exercise3(void) {
+	
+	joystick_position_t position;
+	
+	while(1){
+		position = joystick_get_position();
+		
+		printf("Joystick: \tx: %d \t\tSlider:\tleft: %d \n", position.x, slider_get_left());
+		printf("\t\ty: %d \t\t\tright: %d \n\n", position.y, slider_get_right());
+		
+		
+		if (joystick_button(JOYSTICKBUTTON)){
+			printf("JOYSTICK BUTTON\n");
+		}
+		
+		if (joystick_button(LBUTTON)){
+			printf("LEFT BUTTON\n");
+		}
+		
+		if (joystick_button(RBUTTON)){
+			printf("RIGHT BUTTON\n");
+		}
+		
+		printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+		
+		//_delay_ms(1000);
+	};
+}
+
 int main(void) {
 	
 	// -------------Define variables-------------
@@ -86,8 +115,13 @@ int main(void) {
 	
 	joystick_init(prescaler_joystick_timer);
 	
+	oled_init();
+	for(int i = 0; i < 128 * 8; i++){
+	write_data(0b00000000);
+	}
 	
-	while(1){};
+	oled_put_char('a');
+		
 	
 	return 0;
 }
