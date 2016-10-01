@@ -116,12 +116,9 @@ int main(void) {
 	joystick_init(prescaler_joystick_timer);
 	
 	oled_init();
-	for(int i = 0; i < 128 * 8; i++){
-	write_data(0b00000000);
-	}
+	write_command(0xA7);
+	oled_printf("HEI PÅ DEG DIN BIATCH");
 	
-	oled_put_char('a');
-		
 	
 	return 0;
 }
