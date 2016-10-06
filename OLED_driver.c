@@ -4,9 +4,13 @@
 #include <stdarg.h>
 
 #include "OLED_driver.h"
+#include "font_4x6.h"
+#include "font_5x7.h"
+#include "font_5x7w.h"
 #include "font_8x8.h"
 
 static FILE mystdout = FDEV_SETUP_STREAM(oled_put_char, NULL, _FDEV_SETUP_WRITE);
+static FILE myinvstdout = FDEV_SETUP_STREAM(oled_inv_put_char, NULL, _FDEV_SETUP_WRITE);
 
 #ifndef OLED_COMMAND_ADDRESS
 #define OLED_COMMAND_ADDRESS  0x1000
@@ -16,9 +20,40 @@ static FILE mystdout = FDEV_SETUP_STREAM(oled_put_char, NULL, _FDEV_SETUP_WRITE)
 #define OLED_DATA_ADDRESS 0x1200
 #endif
 
+typedef enum{HORIZONTAL_MODE, VERTICAL_MODE, PAGE_MODE} adressing_mode;
+
 volatile char* ext_oled_cmd = OLED_COMMAND_ADDRESS;
 volatile char* ext_oled_data = OLED_DATA_ADDRESS;
 
+volatile oled_position_t position;
+
+volatile int fontSize = 8;
+const char* const font[] PROGMEM = {font_4x6, font_5x7, font_5x7w, font_8x8};
+int current_font = FONT_8X8;
+
+void oled_is_out_of_bounds() {
+	if (position.col > 127) {
+		position.col -= 128;
+		position.row += 1;
+		if (position.row > 7) {
+			position.row = 0;
+		}
+	}
+}
+
+void switch_font(fontName name) {
+	current_font = name;
+	switch(name){
+		case(FONT_4X6):
+			fontSize = 4;
+		case(FONT_5X7):
+			fontSize = 5;
+		case(FONT_5X7W):
+			fontSize = 5;
+		case(FONT_8X8):
+			fontSize = 8;
+	}
+}
 
 void write_command(uint8_t command){
 	ext_oled_cmd[0] = command;
@@ -31,19 +66,50 @@ void write_data(uint8_t data){
 int oled_put_char(unsigned char c){
 	uint8_t printChar = c-32;
 	
-	int fontSize = 8;
 	for (int i=0; i < fontSize; i++) {
-		write_data(pgm_read_word(&font[printChar][i]));
-		
+		write_data(pgm_read_word(&font_8x8[printChar][i]));
+		position.col += fontSize;
+		oled_is_out_of_bounds();
 	}
 	
 	return 0;
 }
 
+int oled_inv_put_char(unsigned char c){
+	uint8_t printChar = c-32;
+	
+	for (int i=0; i < fontSize; i++) {
+		write_data(~pgm_read_word(&font_8x8[printChar][i]));
+		position.col += fontSize;
+		oled_is_out_of_bounds();
+	}
+	
+	return 0;
+}
+
+void oled_set_adressing_mode(adressing_mode mode) {
+	write_command(0x20);
+	write_command(mode);
+}
+
+// ------------------ functions declared in header below this line---------------------
+
 void oled_printf(char* data, ...){
 	va_list args;
 	va_start(args, data);
 	vfprintf(&mystdout, data, args);
+	va_end(args);
+	
+}
+
+void oled_align_centre(char* title) {
+	oled_goto_column(64- fontSize*strlen(title)/2);
+}
+
+void oled_inv_printf(char* data, ...){
+	va_list args;
+	va_start(args, data);
+	vfprintf(&myinvstdout, data, args);
 	va_end(args);
 	
 }
@@ -79,30 +145,22 @@ void oled_init(){
 
 void oled_reset(){
 	
-	for (int row = 0; row < 8; row++) {
-		for (int col = 0; col < 128; col++) {
-			write_data(0x00000000);
-		}
+	for (int line = 0; line < 8; line++) {
+		oled_clear_line(line);
 	}
-	
 	oled_home();
 }
 
-void oled_set_adressing_mode(adressing_mode mode) {
-	write_command(0x20);
-	write_command(mode);
-}
-
 void oled_home(){
-	oled_goto_line(0);
-	oled_goto_column(0);
+	oled_pos(0,0);
 }
 
 void oled_goto_line(int line){
 	if (line > 7 || line < 0) {
 		return 0;
-	} 
+	}
 	else {
+		position.row = line;
 		oled_set_adressing_mode(PAGE_MODE);
 		write_command(0xB0 + line);
 		oled_set_adressing_mode(HORIZONTAL_MODE);
@@ -112,8 +170,9 @@ void oled_goto_line(int line){
 void oled_goto_column(int column){
 	if (column > 127 || column < 0) {
 		return 0;
-	} 
+	}
 	else {
+		position.col = column;
 		oled_set_adressing_mode(PAGE_MODE);
 		
 		int numLow = column % 16;
@@ -126,16 +185,34 @@ void oled_goto_column(int column){
 	
 }
 
+void oled_goto_letter(int letterPlace){
+	if (letterPlace <= 0) {
+		oled_goto_column(0);
+	}
+	else {
+		oled_goto_column(letterPlace*fontSize-1);
+	}
+}
+
 void oled_clear_line(int line){
-	oled_goto_line(line);
-	oled_goto_column(0);
+	oled_pos(line, 0);
 	
 	for (int col = 0; col < 128; col++) {
-		write_data(0x00000000);
+		write_data(0b00000000);
 	}
 	oled_goto_line(line);	// siden horizontal mode
 }
 
-void oled_pos(int row, int column){
+void oled_fill_line(int line){
+	oled_pos(line,0);
 	
+	for (int col =0; col < 128; col++) {
+		write_data(~0b00000000);
+	}
+	oled_goto_line(line);
+}
+
+void oled_pos(int row, int column){
+	oled_goto_line(row);
+	oled_goto_column(column);	
 }

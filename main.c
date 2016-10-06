@@ -34,7 +34,9 @@ SRAM capacitors page?
 #include "ADC_driver.h"
 #include "joystick_driver.h"
 #include "OLED_driver.h"
+#include "OLED_menu.h"
 
+#include <stdio.h>
 
 void exercise1(void) {
 	
@@ -116,9 +118,14 @@ int main(void) {
 	joystick_init(prescaler_joystick_timer);
 	
 	oled_init();
-	write_command(0xA7);
-	oled_printf("HEI PÅ DEG DIN BIATCH");
 	
-	
+	menu_t *current_menu = oled_menu_init();
+	oled_menu_print(current_menu);
+	while(1){
+		if (oled_menu_selection()){
+		oled_menu_print(current_menu);
+		}
+		_delay_ms(200);
+	}
 	return 0;
 }

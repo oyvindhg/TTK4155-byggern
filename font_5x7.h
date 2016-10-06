@@ -1,6 +1,6 @@
 #include <avr/pgmspace.h>
 
-unsigned char PROGMEM myfont[95][5] = {
+const unsigned char PROGMEM font_5x7[95][5] = {
 	{0b00000000,0b00000000,0b00000000,0b00000000,0b00000000}, //   
 	{0b00000000,0b00000000,0b01011110,0b00000000,0b00000000}, // ! 
 	{0b00000000,0b00001110,0b00000000,0b00001110,0b00000000}, // " 
