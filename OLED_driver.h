@@ -15,6 +15,12 @@ void oled_inv_printf(char* data, ...);
 int oled_put_char(unsigned char);
 int oled_inv_put_char(unsigned char c);
 
+//Fuck this shit so hard
+//void oled_line_print(char* data);
+//void oled_inv_line_print(char* data);
+
+int long_string(char* data);
+
 typedef enum{FONT_4X6, FONT_5X7, FONT_5X7W, FONT_8X8} fontName;
 void switch_font(fontName name);
 void oled_goto_letter(int letterPlace);

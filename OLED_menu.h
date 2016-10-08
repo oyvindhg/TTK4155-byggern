@@ -9,6 +9,8 @@
 #ifndef OLED_MENU_H_
 #define OLED_MENU_H_
 
+#include "joystick_driver.h"
+
 typedef struct{
 	char* title;
 	char** items;
@@ -18,8 +20,9 @@ typedef struct{
 	struct menu_t* right_sibling;
 } menu_t;
 
-int oled_menu_selection(void);
+void oled_menu_selection(void);
 menu_t *oled_menu_init(void);
 void oled_menu_print(menu_t *menu);
+void goto_menu(usb_button_t button);
 
 #endif /* OLED_MENU_H_ */

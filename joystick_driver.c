@@ -11,12 +11,19 @@
 #include <util/delay.h>
 #include <stdint.h>
 
+typedef struct {
+	int x;
+	int y;
+} volatile joystick_position_T2;
+
 #include "joystick_driver.h"
 #include "ADC_driver.h"
 #include "bit_macros.h"
 
 
-volatile joystick_position_t position;
+volatile joystick_position_T2 position;		//husk å enable joystick_get_position()
+volatile int x_pos;
+volatile int y_pos;
 volatile sliders_position_t sliders;
 volatile state contr_state;
 
@@ -44,16 +51,21 @@ ISR(TIMER0_OVF_vect){
 	//printf("Data read: %d\n",extraVar);
 	switch(contr_state){
 		case(JOYSTICK_X):
-			position.x = ((data-x_offset)*200 )/ (joy_x_V_max - joy_x_V_min);
+			//position.x = ((data-x_offset)*200 )/ (joy_x_V_max - joy_x_V_min);
+			x_pos = ((data-x_offset)*200 )/ (joy_x_V_max - joy_x_V_min);			
 			contr_state = JOYSTICK_Y;
 			channel = CHANNEL2;
-			//printf("x: %d", position.x);
+			//printf("\nX1: %d\n", position.x);
 			break;
 		case(JOYSTICK_Y):
-			position.y = ((data-y_offset)*200 )/ (joy_y_V_max - joy_y_V_min);
+			//position.y = ((data-y_offset)*200 )/ (joy_y_V_max - joy_y_V_min);
+			y_pos = ((data-y_offset)*200 )/ (joy_y_V_max - joy_y_V_min);
 			contr_state = LEFT_SLIDER;
 			channel = CHANNEL3;
-			//printf("\ty: %d\n", position.y);
+			//printf("\nX1: %d", position.x);
+			//printf("\tY1: %d\n", position.y);
+// 			printf("\nX1: %d", x_pos);
+// 			printf("\tY1: %d\n", y_pos);
 			break;
 		case(LEFT_SLIDER):
 			sliders.left = (data * 200)/ (slide_left_V_max - slide_left_V_min)  - 100;
@@ -140,14 +152,20 @@ int joystick_button(usb_button_t button){
 }
 
 
-joystick_position_t joystick_get_position() {
-	return position;
-}
+// joystick_position_t joystick_get_position() {
+// 	return position;
+// }
 
 
 joystick_direction_t joystick_get_direction() {
-	int x = position.x;
-	int y = position.y;
+	//printf("\tPOS.Y1: %d\n",position.y);
+	
+	//int x = position.x;
+	//int y = position.y;
+	int x = x_pos;
+	int y = y_pos;
+//  	printf("\t\t\tx: %d",x);
+//  	printf("\ty: %d\n", y);
 	if (abs(x) >= abs(y)){
 		if (abs(x) < 10){
 			return NEUTRAL;
@@ -160,13 +178,16 @@ joystick_direction_t joystick_get_direction() {
 		}
 	} 
 	else{
-		if (abs(y) < 10){
+		if (abs(y) < 65){
+/*			printf("\t\t\tPOS.Y2: %d\n",position.y);*/
 			return NEUTRAL;
 		}
 		else if (y < 0){
+/*			printf("\t\t\tPOS.Y2: %d\n",position.y);*/
 			return DOWN;
 		}
 		else {
+/*			printf("\t\t\tPOS.Y2: %d\n",position.y);*/
 			return UP;
 		}
 	}

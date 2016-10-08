@@ -102,10 +102,6 @@ void oled_printf(char* data, ...){
 	
 }
 
-void oled_align_centre(char* title) {
-	oled_goto_column(64- fontSize*strlen(title)/2);
-}
-
 void oled_inv_printf(char* data, ...){
 	va_list args;
 	va_start(args, data);
@@ -113,6 +109,46 @@ void oled_inv_printf(char* data, ...){
 	va_end(args);
 	
 }
+
+//void oled_line_print(char* data){
+	//printf("data: %s\n", data);
+	//if (position.col + strlen(data)*fontSize > 127){
+		//printf("data2: %s\n", data);
+		////printf("ITS HERE: %d", position.col + strlen("Highscore"));
+		//char newString[strlen(data)*fontSize];
+		//sprintf(newString, "%s", data);
+		//printf("newString: %s\n", newString);
+		//printf("data4: \n");
+		////oled_inv_printf(newString);
+		////printf(newString);
+	//}
+	//else{
+		//oled_printf(data);
+	//}
+//}
+//
+//void oled_inv_line_print(char* data){
+	//if (position.col + strlen(data)*fontSize > 127){
+		//char* newString;
+		//sprintf(newString, data, 127/fontSize);
+		//oled_inv_printf(newString);
+	//}
+	//else{
+		//oled_inv_printf(data);
+	//}
+//}
+
+int long_string(char* data){
+	if (strlen(data)*fontSize > 128){
+		return 1;
+	}
+	return 0;
+}
+
+void oled_align_centre(char* title) {
+	oled_goto_column(64- fontSize*strlen(title)/2);
+}
+
 
 
 void oled_init(){

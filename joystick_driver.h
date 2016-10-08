@@ -18,15 +18,16 @@ typedef enum {JOYSTICKBUTTON, LBUTTON, RBUTTON} usb_button_t;
 int joystick_button(usb_button_t button);
 
 typedef struct {
-	int x, y;
-} joystick_position_t;
-
-typedef struct {
 	int left, right;
 } sliders_position_t;
 
 typedef enum {LEFT, RIGHT, UP, DOWN, NEUTRAL} joystick_direction_t;
 	
+typedef struct {
+	int x;
+	int y;
+} joystick_position_t;
+
 joystick_position_t joystick_get_position(void);
 joystick_direction_t joystick_get_direction(void);
 

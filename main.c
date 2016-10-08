@@ -119,12 +119,10 @@ int main(void) {
 	
 	oled_init();
 	
-	menu_t *current_menu = oled_menu_init();
-	oled_menu_print(current_menu);
+	oled_menu_init();
+	
 	while(1){
-		if (oled_menu_selection()){
-		oled_menu_print(current_menu);
-		}
+		oled_menu_selection();
 		_delay_ms(200);
 	}
 	return 0;
