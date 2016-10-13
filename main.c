@@ -26,6 +26,7 @@ SRAM capacitors page?
 
 #include <avr/io.h>		//This is also included in UART_driver.h. Should we remove it from here?
 #include <util/delay.h>
+#include <stdio.h>
 
 #include "bit_macros.h"
 #include "UART_driver.h"
@@ -35,10 +36,12 @@ SRAM capacitors page?
 #include "joystick_driver.h"
 #include "OLED_driver.h"
 #include "OLED_menu.h"
+#include "CAN_controller_driver.h"
 
-#include <stdio.h>
 
 void exercise1(void) {
+	
+	//UART
 	
 	put_char(get_char() + 1);		//Returns the character next in the alphabet.
 
@@ -47,6 +50,8 @@ void exercise1(void) {
 }
 
 void exercise2(void) {
+	
+	//SRAM
 	
 	char data = 'c';
 	
@@ -72,6 +77,8 @@ void exercise2(void) {
 }
 
 void exercise3(void) {
+	
+	//Joystick
 	
 	joystick_position_t position;
 	
@@ -100,11 +107,22 @@ void exercise3(void) {
 	};
 }
 
+void exercise4(void) {
+	
+	//OLED
+	
+	while(1){
+		oled_menu_selection();
+		_delay_ms(200);
+	}
+	
+}
+
 int main(void) {
 	
 	// -------------Define variables-------------
 	
-	int prescaler_joystick_timer = 1024;
+	int prescaler_joystick_timer = 1024;	//Only this? Is it necessary?
 	
 	// ------------------------------------------
 
@@ -121,9 +139,12 @@ int main(void) {
 	
 	oled_menu_init();
 	
+	uint8_t can_contr = mcp_2515_init();
+	
 	while(1){
-		oled_menu_selection();
-		_delay_ms(200);
+		mcp_2515_read_status();
+		_delay_ms(10);
 	}
+	
 	return 0;
 }
