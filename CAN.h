@@ -20,9 +20,11 @@ typedef struct {
 
 void can_init(void);
 void can_message_send(can_message* message);
-void can_error(void);
-void can_transmit_complete(void);
-can_message* can_data_receive(void);
-void can_int_vect(void);
+
+void can_handle_messages();
+int can_error(void);
+int can_transmit_complete(int);
+void can_message_receive(int, can_message* message);
+void can_int_vect(int*);
 
 #endif /* CAN_H_ */

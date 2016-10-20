@@ -37,6 +37,7 @@ SRAM capacitors page?
 #include "OLED_driver.h"
 #include "OLED_menu.h"
 #include "CAN_controller_driver.h"
+#include "CAN.h"
 
 
 void exercise1(void) {
@@ -139,11 +140,30 @@ int main(void) {
 	
 	oled_menu_init();
 	
-	uint8_t can_contr = mcp_2515_init();
+	printf("wtf is real");
+	
+	can_init();
+	
+	can_message test;
+	test.id		= 729;
+	test.data[0]	= 'h';
+	test.data[1]	= 'e';
+	test.data[2]	= 'l';
+	test.data[3]	= 'l';
+	test.length	= 4;
+	
+	//can_message_send(&test);
+	
+	printf("BRA\n");
+	_delay_ms(3000);
+	printf("3sec");
 	
 	while(1){
-		mcp_2515_read_status();
-		_delay_ms(10);
+		if ( can_interrupt()){
+			printf("\n!\n");
+			//can_handle_messages();
+		}
+		_delay_ms(30);
 	}
 	
 	return 0;

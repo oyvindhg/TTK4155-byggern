@@ -10,7 +10,7 @@
 #include "bit_macros.h"
 
 #include <avr/io.h>
-// #include <avr/delay.h>
+#include <avr/delay.h>
 
 // Ok to clear_bit and set_bit PB4 in SPI?
 // How can it recognize MCP_RESET without including MCP2515.h?
@@ -19,7 +19,6 @@ void mcp_activate_slave(){
 	/* Activate Slave Select */
 	clear_bit(PORTB, PB4);
 }
-
 
 void mcp_deactivate_slave(){
 	/* Deactivate Slave Select */
@@ -36,7 +35,7 @@ uint8_t mcp_2515_init(){
 	SPI_init();
 	
 	mcp_2515_reset();
-	//_delay_ms(0.003); Trenger vi delay etter reset som det står i databladet???
+	_delay_ms(0.03);	//a small delay after mcp reset
 	
 	val = mcp_2515_read(MCP_CANSTAT);
 	uint8_t mode_bits = (val & MODE_MASK);
@@ -46,11 +45,16 @@ uint8_t mcp_2515_init(){
 	}
 	
 	mcp_2515_set_mode(MODE_LOOPBACK);
-
+	
 	val = mcp_2515_read(MCP_CANSTAT);
 	mode_bits = (val & MODE_MASK);
+	
 	if(mode_bits != MODE_LOOPBACK){
+		/*
+		Actually WTF, hvorfor senker det hele programmet?
 		printf("MCP2515 is NOT in loopback mode after reset! Its config bits are %x\n", mode_bits);
+		*/
+		printf("\n!\n");
 		return 1;
 	}
 	
