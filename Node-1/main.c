@@ -177,8 +177,16 @@ int main(void) {
 	
 	oled_menu_init();
 	
-	exercise5();
+	can_init(MODE_NORMAL);
 	
+	while(1){
+			
+		if ( can_interrupt()){
+			can_handle_messages();
+		}
+			
+		_delay_ms(30);
+	}
 	
 	return 0;
 }

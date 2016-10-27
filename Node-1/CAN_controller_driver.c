@@ -34,7 +34,6 @@ uint8_t mcp_2515_init(uint8_t mode){
 	SPI_init();
 	
 	mcp_2515_reset();
-	_delay_ms(0.03);	//a small delay after mcp reset
 	
 	val = mcp_2515_read(MCP_CANSTAT);
 	uint8_t mode_bits = (val & MODE_MASK);
@@ -65,6 +64,7 @@ void mcp_2515_reset(){
 	mcp_activate_slave();
 	SPI_write(MCP_RESET);
 	mcp_deactivate_slave();
+	_delay_ms(10);	//a small delay after mcp reset
 }
 
 uint8_t mcp_2515_read(uint8_t address){

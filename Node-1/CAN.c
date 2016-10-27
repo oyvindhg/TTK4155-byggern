@@ -64,6 +64,7 @@ void can_handle_messages(){
 		printf("RXB0\n");
 		can_message_receive(0, &message1);
 		int length = message1.length;
+		printf("ID: %d\n", message1.id);
 		printf("Message: ");
 		for (uint8_t i = 0; i < length; i++){
 			printf("%c", message1.data[i]);
