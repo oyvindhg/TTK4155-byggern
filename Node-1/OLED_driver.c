@@ -181,7 +181,12 @@ void oled_init(){
 
 void oled_reset(){
 	
+	//int line = 0;
+	
+	//printf("\nLINE: %d\n", line);
+	
 	for (int line = 0; line < 8; line++) {
+		//printf("\nline: %d", line);
 		oled_clear_line(line);
 	}
 	oled_home();

@@ -6,7 +6,6 @@
  */
 
 #include "CAN_controller_driver.h"
-#include "MCP2515.h"
 #include "bit_macros.h"
 
 #include <avr/io.h>
@@ -29,7 +28,7 @@ void mcp_2515_set_mode(uint8_t mode){
 	mcp_2515_write(MCP_CANCTRL, mode);
 }
 
-uint8_t mcp_2515_init(){
+uint8_t mcp_2515_init(uint8_t mode){
 	
 	uint8_t val;
 	SPI_init();
@@ -44,16 +43,16 @@ uint8_t mcp_2515_init(){
 		return 1;
 	}
 	
-	mcp_2515_set_mode(MODE_LOOPBACK);
+	mcp_2515_set_mode(mode);
 	
 	val = mcp_2515_read(MCP_CANSTAT);
 	mode_bits = (val & MODE_MASK);
 	
-	if(mode_bits != MODE_LOOPBACK){
-		/*
-		Actually WTF, hvorfor senker det hele programmet?
-		printf("MCP2515 is NOT in loopback mode after reset! Its config bits are %x\n", mode_bits);
-		*/
+	if(mode_bits != mode){
+		
+		//Actually WTF, hvorfor senker det hele programmet?
+		printf("MCP2515 is NOT in correct mode after reset! Its config bits are %x\n", mode_bits);
+		
 		printf("\n!\n");
 		return 1;
 	}

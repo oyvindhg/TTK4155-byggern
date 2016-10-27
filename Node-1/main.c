@@ -9,9 +9,9 @@
  Tip for debug of a variable: Use volatile when initializing the variable, then press Start Debugging and Break. Then add the variable to the watch-list after right clicking it. Now it can be viewed in debug mode.
  
 
-SPÃ˜RSMÃ…L:
+SPØRSMÅL:
 
-Decoupling capacitors. Er de blÃ¥ ok?
+Decoupling capacitors. Er de blå ok?
 
 Low-pass filter on ALE signal. Schematic on STK501???
 
@@ -36,7 +36,6 @@ SRAM capacitors page?
 #include "joystick_driver.h"
 #include "OLED_driver.h"
 #include "OLED_menu.h"
-#include "CAN_controller_driver.h"
 #include "CAN.h"
 
 
@@ -119,6 +118,44 @@ void exercise4(void) {
 	
 }
 
+
+void exercise5(void) {
+	
+	can_init(MODE_LOOPBACK);
+	
+	can_message test;
+	test.id		= 1337;
+	test.data[0]	= 'H';
+	test.data[1]	= 'e';
+	test.data[2]	= 'l';
+	test.data[3]	= 'l';
+	test.data[4]	= 'o';
+	test.length	= 5;
+	
+	can_message test2;
+	test2.id		= 1338;
+	test2.data[0]	= 'W';
+	test2.data[1]	= 'o';
+	test2.data[2]	= 'r';
+	test2.data[3]	= 'l';
+	test2.data[4]	= 'd';
+	test2.length	= 5;
+	
+	
+	can_message_send(&test);
+	can_message_send(&test2);
+	
+	while(1){
+		
+		if ( can_interrupt()){
+			can_handle_messages();
+		}
+		
+		_delay_ms(30);
+	}
+	
+}
+
 int main(void) {
 	
 	// -------------Define variables-------------
@@ -140,31 +177,8 @@ int main(void) {
 	
 	oled_menu_init();
 	
-	printf("wtf is real");
+	exercise5();
 	
-	can_init();
-	
-	can_message test;
-	test.id		= 729;
-	test.data[0]	= 'h';
-	test.data[1]	= 'e';
-	test.data[2]	= 'l';
-	test.data[3]	= 'l';
-	test.length	= 4;
-	
-	//can_message_send(&test);
-	
-	printf("BRA\n");
-	_delay_ms(3000);
-	printf("3sec");
-	
-	while(1){
-		if ( can_interrupt()){
-			printf("\n!\n");
-			//can_handle_messages();
-		}
-		_delay_ms(30);
-	}
 	
 	return 0;
 }
