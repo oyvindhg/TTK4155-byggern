@@ -11,17 +11,14 @@
 #include <avr/io.h>
 #include <avr/delay.h>
 
-// Ok to clear_bit and set_bit PB4 in SPI?
-// How can it recognize MCP_RESET without including MCP2515.h?
-
 void mcp_activate_slave(){
 	/* Activate Slave Select */
-	clear_bit(PORTB, PB4);
+	clear_bit(PORTB, PB7);
 }
 
 void mcp_deactivate_slave(){
 	/* Deactivate Slave Select */
-	set_bit(PORTB, PB4);
+	set_bit(PORTB, PB7);
 }
 
 void mcp_2515_set_mode(uint8_t mode){
@@ -33,23 +30,14 @@ uint8_t mcp_2515_init(uint8_t mode){
 	uint8_t val;
 	SPI_init();
 	
-	
 	mcp_2515_reset();
-	_delay_ms(0.03);	//a small delay after mcp reset
 	
-	
-	printf("hey3");
 	val = mcp_2515_read(MCP_CANSTAT);
-	
-	
-	printf("hey2");
 	
 	uint8_t mode_bits = (val & MODE_MASK);
 	
-	printf("hey");
-	
 	if(mode_bits != MODE_CONFIG){
-		//printf("MCP2515 is NOT in Configuration mode after reset! Its config bits are %x\n", mode_bits);
+		printf("MCP2515 is NOT in Configuration mode after reset! Its config bits are %x\n", mode_bits);
 		return 1;
 	}
 	
@@ -61,10 +49,8 @@ uint8_t mcp_2515_init(uint8_t mode){
 	
 	if(mode_bits != mode){
 		
-		//Actually WTF, hvorfor senker det hele programmet?
-		//printf("MCP2515 is NOT in correct mode after reset! Its config bits are %x\n", mode_bits);
-		
-		printf("\n!\n");
+		printf("MCP2515 is NOT in correct mode after reset! Its config bits are %x\n", mode_bits);
+
 		return 1;
 	}
 	
@@ -76,24 +62,17 @@ void mcp_2515_reset(){
 	mcp_activate_slave();
 	SPI_write(MCP_RESET);
 	mcp_deactivate_slave();
+	_delay_ms(10);	//a small delay after mcp reset
 }
 
 uint8_t mcp_2515_read(uint8_t address){
 	mcp_activate_slave();
 	
-	printf("before read");
-	
 	uint8_t data;
-	
-	printf("lol");
 	
 	SPI_write(MCP_READ);
 	
-	printf("between");
-	
 	SPI_write(address);
-	
-	printf("after write");
 	
 	data = SPI_read();
 	

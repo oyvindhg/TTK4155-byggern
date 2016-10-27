@@ -18,10 +18,6 @@
 
 void UART_init(unsigned long clock_speed){
 	
-	//Er dette riktig?
-	//clear_bit(DDRD,PD0);			//0 sets pin PD0 (RXD0) to input mode. PD0 is receiver.
-	//set_bit(DDRD,PD1);				//1 sets pin PD1 (TXD0) to output mode. PD1 is transmitter.
-
 	unsigned long baud = BAUD;
 	unsigned char ubrr = (clock_speed / (baud * 16)) - 1;	//Should be, and is, 31
 	
@@ -43,16 +39,12 @@ void UART_init(unsigned long clock_speed){
 
 int put_char(unsigned char c){
 	loop_until_bit_is_set(UCSR0A, UDRE0);
-	/*UCSR0B &= ~(1<<TXB80);
-	if ( c & 0x0100 )
-	UCSR0B |= (1<<TXB80);*/
 	UDR0 = c;
 	return 0;
 }
 
 int get_char(void){
 	loop_until_bit_is_set(UCSR0A, RXC0);
-	
-	//if test_bit(UCSR0A, RXC0)
+
 	return UDR0;
 }

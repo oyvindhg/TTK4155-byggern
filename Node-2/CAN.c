@@ -18,25 +18,22 @@
 volatile int flag = 0;
 
 
-ISR(INT0_vect){
-	//printf("interrupt");
+ISR(INT2_vect){
 	flag = 1;
 }
 
 void can_init(uint8_t mode){
-
-	printf("before2");
+	
 	mcp_2515_init(mode);
-	printf("after2");
 	
 	mcp_2515_write(MCP_CANINTE, MCP_RX_INT);
 
 	// Disable global interrupts
 	cli();
-	// Interrupt on falling edge PB0
+	// Interrupt on falling edge
 	set_bit(EICRA, ISC01);
 	clear_bit(EICRA, ISC00);
-	// Enable interrupt on PB0
+	// Enable interrupt
 	set_bit(EIMSK,INT2);
 	// Enable global interrupts
 	sei();
