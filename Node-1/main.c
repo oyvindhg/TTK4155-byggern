@@ -9,9 +9,9 @@
  Tip for debug of a variable: Use volatile when initializing the variable, then press Start Debugging and Break. Then add the variable to the watch-list after right clicking it. Now it can be viewed in debug mode.
  
 
-SPØRSMÅL:
+SPÃ˜RSMÃ…L:
 
-Decoupling capacitors. Er de blå ok?
+Decoupling capacitors. Er de blÃ¥ ok?
 
 Low-pass filter on ALE signal. Schematic on STK501???
 
