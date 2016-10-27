@@ -9,7 +9,6 @@
 // 
 
 #include "CAN.h"
-#include "MCP2515.h"
 #include "bit_macros.h"
 
 #include <avr/io.h>
@@ -20,29 +19,27 @@ volatile int flag = 0;
 
 
 ISR(INT0_vect){
-	printf("interrupt");
+	//printf("interrupt");
 	flag = 1;
 }
 
-void can_init(){
-	printf("WHERE");
-	
+void can_init(uint8_t mode){
 
-	mcp_2515_init();
-	printf("DO");
+	printf("before2");
+	mcp_2515_init(mode);
+	printf("after2");
 	
 	mcp_2515_write(MCP_CANINTE, MCP_RX_INT);
-	printf("YOU");
+
 	// Disable global interrupts
 	cli();
-	// Interrupt on falling edge PD2
-	set_bit(MCUCR, ISC01);
-	clear_bit(MCUCR, ISC00);
-	// Enable interrupt on PD2
-	set_bit(GICR,INT0);
+	// Interrupt on falling edge PB0
+	set_bit(EICRA, ISC01);
+	clear_bit(EICRA, ISC00);
+	// Enable interrupt on PB0
+	set_bit(EIMSK,INT2);
 	// Enable global interrupts
 	sei();
-	printf("FUCK UP");
 	
 	
 }
@@ -61,25 +58,28 @@ void can_handle_messages(){
 	
 	can_int_vect(v);
 	
-	can_message *message1;
-	can_message *message2;
+	can_message message1;
+	can_message message2;
 	
 	if (v[0]){
 		printf("RXB0\n");
 		can_message_receive(0, &message1);
-		int length = message1->length;
+		int length = message1.length;
+		printf("Message: ");
 		for (uint8_t i = 0; i < length; i++){
-			uint8_t data = message1->data[i];
-			printf("data %d: %c\n",i, data);
+			printf("%c", message1.data[i]);
 		}
+		printf("\n\n");
 	}
 	
 	if (v[1]){
 		printf("RXB1\n");
+		printf("Message: ");
 		can_message_receive(1, &message2);
-		for (uint8_t i = 0; i < message2->length; i++){
-			printf("data %d: %c\n",i, &message2->data[i]);
+		for (uint8_t i = 0; i < message2.length; i++){
+			printf("%c", message2.data[i]);
 		}
+		printf("\n\n");
 	}
 	
 	mcp_2515_bit_modify(MCP_CANINTF, 3, 0);
@@ -104,7 +104,7 @@ void can_message_send(can_message* message){
 	unsigned int ID = message->id;
 	char id_high = ID / 8;
 	char id_low = ID % 8;
-	id_low = id_low*2^5;
+	id_low = id_low*0b100000;
 	mcp_2515_write(MCP_TXB0SIDH + 16 * buffer_number, id_high);
 	mcp_2515_write(MCP_TXB0SIDL + 16 * buffer_number, id_low);
 	
@@ -136,10 +136,13 @@ int can_transmit_complete(int buffer_number){
 void can_message_receive(int rec_buff_num, can_message* received_message){
 	uint8_t id_high = mcp_2515_read(MCP_RXB0SIDH + 16 * rec_buff_num);
 	uint8_t id_low = mcp_2515_read(MCP_RXB0SIDL + 16 * rec_buff_num);
+	//printf("IDLOW1: %u\t", id_low);
 	uint8_t mask = 0b11100000;
 	id_low = (id_low & mask);
-	received_message->id = 0b1000*id_high + id_low;
-	
+	received_message->id = 0b1000*id_high + id_low/0b100000;
+	//printf("\nIDLOW: %u\n", id_low);
+	//printf("IDHIGH: %u\n", id_high);
+	//printf("ID: %d\n", received_message->id);
 	int data_length = mcp_2515_read(MCP_RXB0DLC + 16 * rec_buff_num);
 	mask = 0b1111;
 	received_message->length = (data_length & mask);

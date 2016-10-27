@@ -30,8 +30,8 @@ void UART_init(unsigned long clock_speed){
 	UBRR0L = ubrr;				// Save the least sign. bits (8 least sign. bits)
 	
 	/* Set frame format: 8data, 2stop bit */
-	UCSR0C = (1<<URSEL0)|(1<<USBS0);		// USBS: 1 = Use 2 stop bits, not 1												!!!! REMEMBER THAT URSEL0 MUST BE SET FOR EVERY PIN CHANGE
-	UCSR0C = (1<<URSEL0)|(3<<UCSZ00);		// UCSZ00: 3 - UCSZ0 and UCSZ1 defines 8 bits (11 binary) for each character	!!!! REMEMBER THAT URSEL0 MUST BE SET FOR EVERY PIN CHANGE
+	UCSR0C = (1<<USBS0);		// USBS: 1 = Use 2 stop bits, not 1												!!!! REMEMBER THAT URSEL0 MUST BE SET FOR EVERY PIN CHANGE
+	UCSR0C = (3<<UCSZ00);		// UCSZ00: 3 - UCSZ0 and UCSZ1 defines 8 bits (11 binary) for each character	!!!! REMEMBER THAT URSEL0 MUST BE SET FOR EVERY PIN CHANGE
 	
 	/* Enable receiver and transmitter */
 	set_bit(UCSR0B,RXEN0);		//RXEN enables the receiver.
