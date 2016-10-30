@@ -15,10 +15,11 @@
 #include <avr/interrupt.h>
 #include <avr/delay.h>
 
-volatile int flag = 0;
+volatile uint8_t flag = 0;
 
 
 ISR(INT2_vect){
+	//printf("int\n");
 	flag = 1;
 }
 
@@ -28,6 +29,7 @@ void can_init(uint8_t mode){
 	
 	mcp_2515_write(MCP_CANINTE, MCP_RX_INT);
 
+	/*
 	// Disable global interrupts
 	cli();
 	// Interrupt on falling edge
@@ -37,12 +39,12 @@ void can_init(uint8_t mode){
 	set_bit(EIMSK,INT2);
 	// Enable global interrupts
 	sei();
-	
+	*/
 	
 }
 
 int can_interrupt(){
-	if (flag){	
+	if (flag){
 		flag = 0;
 		return 1;
 	}
@@ -62,9 +64,10 @@ void can_handle_messages(){
 		printf("RXB0\n");
 		can_message_receive(0, &message1);
 		int length = message1.length;
-		printf("Message: ");
+		printf("ID: %u\n", message1.id);
+		printf("Message: \n");
 		for (uint8_t i = 0; i < length; i++){
-			printf("%c", message1.data[i]);
+			printf("%d\n", message1.data[i]);
 		}
 		printf("\n\n");
 	}
@@ -74,7 +77,7 @@ void can_handle_messages(){
 		printf("Message: ");
 		can_message_receive(1, &message2);
 		for (uint8_t i = 0; i < message2.length; i++){
-			printf("%c", message2.data[i]);
+			printf("%d", message2.data[i]);
 		}
 		printf("\n\n");
 	}
