@@ -10,6 +10,7 @@
 
 #include "CAN.h"
 #include "bit_macros.h"
+#include "joystick_driver.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -19,7 +20,6 @@ volatile int flag = 0;
 
 
 ISR(INT0_vect){
-	//printf("interrupt");
 	flag = 1;
 }
 
@@ -171,5 +171,3 @@ int can_error(void){
 	}
 	return 0;
 }
-
-//Hvis det nye brettet ikke funker, sett PB0 på Arduinoen til 1!!!!!!!!!!!!!

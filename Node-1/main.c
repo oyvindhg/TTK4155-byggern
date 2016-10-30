@@ -81,8 +81,10 @@ void exercise3(void) {
 	//Joystick
 	
 	joystick_position_t position;
+	joystick_direction_t direction;
 	
 	while(1){
+		
 		position = joystick_get_position();
 		
 		printf("Joystick: \tx: %d \t\tSlider:\tleft: %d \n", position.x, slider_get_left());
@@ -101,7 +103,12 @@ void exercise3(void) {
 			printf("RIGHT BUTTON\n");
 		}
 		
-		printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+		
+		direction = joystick_get_direction();
+		
+		printf("\nDirection: %d\n\n", direction);
+		
+		//printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n");
 		
 		//_delay_ms(1000);
 	};
@@ -179,13 +186,37 @@ int main(void) {
 	
 	can_init(MODE_NORMAL);
 	
+//	uint8_t id = 1;
+	
+	can_message joy_pos;
+	joystick_position_t position;
+	
+	can_message test2;
+	test2.id		= 1338;
+	test2.data[0]	= 'W';
+	test2.data[1]	= 'o';
+	test2.data[2]	= 'r';
+	test2.data[3]	= 'l';
+	test2.data[4]	= 'd';
+	test2.length	= 5;
+	
+	can_message_send(&test2);
+	
+	uint8_t id = 0;
+	
 	while(1){
+		position = joystick_get_position();
+		joy_pos.data[0] = position.x;
+		joy_pos.data[1] = position.y;
+		joy_pos.length = 2;
+		joy_pos.id = id;
+		
+		printf("x: %d, y: %d\n", joy_pos.data[0], joy_pos.data[1]);
 			
-		if ( can_interrupt()){
-			can_handle_messages();
-		}
-			
-		_delay_ms(30);
+		can_message_send(&joy_pos);
+		
+		id = id + 1;
+		_delay_ms(500);
 	}
 	
 	return 0;

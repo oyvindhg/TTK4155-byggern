@@ -14,7 +14,7 @@
 typedef struct {
 	unsigned int id;
 	uint8_t length;
-	uint8_t data[8];
+	int data[8];
 } can_message;
 
 
