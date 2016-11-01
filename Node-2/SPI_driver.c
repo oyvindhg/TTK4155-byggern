@@ -10,9 +10,7 @@
 #include "bit_macros.h"
 
 void SPI_init(){
-	
-	/*from FAQ*/
-	
+
 	/* Set SS, MOSI and SCK output, all others input. PB0 output from FAQ */
 	DDRB = (1<<PB0)|(1<<PB7)|(1<<PB2)|(1<<PB1);
 	/* Enable SPI, Master, set clock rate fck/16 */

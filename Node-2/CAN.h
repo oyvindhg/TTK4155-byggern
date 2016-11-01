@@ -25,6 +25,7 @@ void can_handle_messages();
 int can_error(void);
 int can_transmit_complete(int);
 void can_message_receive(int, can_message* message);
-void can_int_vect(int*);
+void can_int_vect(uint8_t*);
+uint8_t can_interrupt(void);
 
 #endif /* CAN_H_ */

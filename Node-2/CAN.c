@@ -28,22 +28,20 @@ void can_init(uint8_t mode){
 	mcp_2515_init(mode);
 	
 	mcp_2515_write(MCP_CANINTE, MCP_RX_INT);
-
-	/*
+	
 	// Disable global interrupts
 	cli();
 	// Interrupt on falling edge
-	set_bit(EICRA, ISC01);
-	clear_bit(EICRA, ISC00);
+	set_bit(EICRA, ISC21);
+	clear_bit(EICRA, ISC20);
 	// Enable interrupt
 	set_bit(EIMSK,INT2);
 	// Enable global interrupts
 	sei();
-	*/
 	
 }
 
-int can_interrupt(){
+uint8_t can_interrupt(){
 	if (flag){
 		flag = 0;
 		return 1;
@@ -52,36 +50,38 @@ int can_interrupt(){
 }
 
 void can_handle_messages(){
-	
-	int v[2] = {0};
+	uint8_t v[2] = {0};
 	
 	can_int_vect(v);
-	
 	can_message message1;
-	can_message message2;
 	
 	if (v[0]){
-		printf("RXB0\n");
+		printf("  INCOMING MESSAGE\n");
+		printf("|  buffer\t| length\t|     ID\t|\n");
+		printf("|  RXB0\t|      %u \t|   %u \t|\n\n", message1.length, message1.id);
 		can_message_receive(0, &message1);
-		int length = message1.length;
-		printf("ID: %u\n", message1.id);
-		printf("Message: \n");
-		for (uint8_t i = 0; i < length; i++){
-			printf("%d\n", message1.data[i]);
+		//printf("ID: %u\n", message1.id);
+		printf("  MSG:\t    |");
+		for (uint8_t i = 0; i < message1.length; i++){
+			printf(" %d |", message1.data[i]);
 		}
-		printf("\n\n");
+		printf("\n\n\n");
 	}
+	
+	can_int_vect(v);
+	can_message message2;
 	
 	if (v[1]){
-		printf("RXB1\n");
-		printf("Message: ");
+		printf("  INCOMING MESSAGE\n");
+		printf("|    buff\t|     ID\t|    len\t|\n");
+		printf("|  RXB1\t|   %u \t|      %u \t|\n\n", message2.id, message2.length);
 		can_message_receive(1, &message2);
+		printf("|   msg\t|");
 		for (uint8_t i = 0; i < message2.length; i++){
-			printf("%d", message2.data[i]);
+			printf(" %d | ", message2.data[i]);
 		}
-		printf("\n\n");
+		printf("\n\n\n");
 	}
-	
 	mcp_2515_bit_modify(MCP_CANINTF, 3, 0);
 }
 
@@ -109,12 +109,12 @@ void can_message_send(can_message* message){
 	mcp_2515_write(MCP_TXB0SIDL + 16 * buffer_number, id_low);
 	
 	// Define data length of message
-	int data_length = message->length;
+	uint8_t data_length = message->length;
 	mcp_2515_write(MCP_TXB0DLC + 16 * buffer_number, data_length);
 	
 	// Write data bytes to transmit buffer
 	char* data_bytes = message->data;
-	for (int byte = 0; byte < data_length; byte++) {
+	for (uint8_t byte = 0; byte < data_length; byte++) {
 		mcp_2515_write(MCP_TXB0Dm + byte + 16 * buffer_number, data_bytes[byte]);
 	}
 	
@@ -124,8 +124,8 @@ void can_message_send(can_message* message){
 }
 
 int can_transmit_complete(int buffer_number){
-	uint8_t flag = mcp_2515_read(MCP_CANINTF);
-	uint8_t interrupt_bits = (flag & (MCP_TX0IF + buffer_number*2));
+	uint8_t transmit_flag = mcp_2515_read(MCP_CANINTF);
+	uint8_t interrupt_bits = (transmit_flag & (MCP_TX0IF + buffer_number*2));
 	
 	if(interrupt_bits == (MCP_TX0IF + buffer_number*2)){
 			return 0;
@@ -136,29 +136,25 @@ int can_transmit_complete(int buffer_number){
 void can_message_receive(int rec_buff_num, can_message* received_message){
 	uint8_t id_high = mcp_2515_read(MCP_RXB0SIDH + 16 * rec_buff_num);
 	uint8_t id_low = mcp_2515_read(MCP_RXB0SIDL + 16 * rec_buff_num);
-	//printf("IDLOW1: %u\t", id_low);
 	uint8_t mask = 0b11100000;
 	id_low = (id_low & mask);
 	received_message->id = 0b1000*id_high + id_low/0b100000;
-	//printf("\nIDLOW: %u\n", id_low);
-	//printf("IDHIGH: %u\n", id_high);
-	//printf("ID: %d\n", received_message->id);
-	int data_length = mcp_2515_read(MCP_RXB0DLC + 16 * rec_buff_num);
+	
+	uint8_t data_length = mcp_2515_read(MCP_RXB0DLC + 16 * rec_buff_num);
 	mask = 0b1111;
 	received_message->length = (data_length & mask);
 	
-	
-	for (int byte = 0; byte < data_length; byte++) {
-		received_message->data[byte] = mcp_2515_read(MCP_RXB0DM + byte + 16 * rec_buff_num);
+	for (int8_t byte = 0; byte < data_length; byte++) {
+		received_message->data[byte] = (int8_t)mcp_2515_read(MCP_RXB0DM + byte + 16 * rec_buff_num);
 	}
 	
 	
 }
 
-void can_int_vect(int* v) { 
-	uint8_t flag = mcp_2515_read(MCP_CANINTF);
-	v[0] = (flag & MCP_RX0IF);
-	v[1] = (flag & MCP_RX1IF);
+void can_int_vect(uint8_t* v) { 
+	uint8_t int_flag = mcp_2515_read(MCP_CANINTF);
+	v[0] = (int_flag & MCP_RX0IF);
+	v[1] = (int_flag & MCP_RX1IF);
 }
 
 int can_error(void){
@@ -171,5 +167,3 @@ int can_error(void){
 	}
 	return 0;
 }
-
-//Hvis det nye brettet ikke funker, sett PB0 på Arduinoen til 1!!!!!!!!!!!!!

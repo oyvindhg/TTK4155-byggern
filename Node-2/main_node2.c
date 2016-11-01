@@ -82,11 +82,13 @@ int main(void) {
 	
 	can_init(MODE_NORMAL);
 	
-	timer_init();
+	//timer_init();
 	
 	while(1){
-		_delay_ms(30);
-		can_handle_messages();
+		if (can_interrupt()){
+			can_handle_messages();
+		}
+
 	}
 
 }
