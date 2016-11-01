@@ -216,7 +216,7 @@ int main(void) {
 		can_message_send(&joy_pos);
 		
 		id = id + 1;
-		_delay_ms(500);
+		_delay_ms(140);
 	}
 	
 	return 0;
