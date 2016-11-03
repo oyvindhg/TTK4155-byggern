@@ -211,12 +211,12 @@ int main(void) {
 		joy_pos.length = 2;
 		joy_pos.id = id;
 		
-		printf("x: %d, y: %d\n", joy_pos.data[0], joy_pos.data[1]);
+		//printf("x: %d, y: %d\n", joy_pos.data[0], joy_pos.data[1]);
 			
 		can_message_send(&joy_pos);
 		
 		id = id + 1;
-		_delay_ms(140);
+		_delay_ms(30);
 	}
 	
 	return 0;

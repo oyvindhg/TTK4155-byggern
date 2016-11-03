@@ -115,9 +115,9 @@ void can_message_send(can_message* message){
 	mcp_2515_write(MCP_TXB0DLC + 16 * buffer_number, data_length);
 	
 	// Write data bytes to transmit buffer
-	int* data_bytes = message->data;
+	char* data_bytes = message->data;
 	for (uint8_t byte = 0; byte < data_length; byte++) {
-		printf("\t\t%u: %u\n", byte,data_bytes[byte]);
+		//printf("\t\t%d: %d\n", byte,data_bytes[byte]);
 		mcp_2515_write(MCP_TXB0Dm + byte + 16 * buffer_number, data_bytes[byte]);
 	}
 	
