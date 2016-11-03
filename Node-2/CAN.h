@@ -21,7 +21,7 @@ typedef struct {
 void can_init(uint8_t mode);
 void can_message_send(can_message* message);
 
-void can_handle_messages();
+int can_handle_messages();
 int can_error(void);
 int can_transmit_complete(int);
 void can_message_receive(int, can_message* message);

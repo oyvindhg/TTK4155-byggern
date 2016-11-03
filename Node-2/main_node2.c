@@ -16,6 +16,7 @@
 #include "bit_macros.h"
 #include "UART_driver.h"
 #include "CAN.h"
+#include "servo_driver.h"
 
 void exercise_6() {
 
@@ -75,19 +76,23 @@ void exercise_6() {
 
 int main(void) {
 	
-	
 	unsigned long clock_speed = F_CPU;
-	
 	UART_init(clock_speed);
-	
 	can_init(MODE_NORMAL);
 	
-	//timer_init();
+	servo_init(clock_speed);
+	
+	int servo_y = 0;
 	
 	while(1){
+		
+		_delay_ms(10);
+		
 		if (can_interrupt()){
-			can_handle_messages();
+			servo_y = can_handle_messages();
 		}
+		
+		set_servo(servo_y);
 
 	}
 
