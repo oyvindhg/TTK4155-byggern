@@ -5,27 +5,33 @@
  *  Author: Whiskey Dick
  */ 
 
+#include <AVR/io.h>
 
-clear_bit(DDRF,PF0);
-int sensor_value = 0;
+#include "IR_driver.h"
+#include "ADC_driver.h"
+
 uint8_t num_readings = 4;
-uint8_t readings[num_readings];
+uint16_t readings[4];
 uint8_t read_index = 0;
-uint8_t total = 0;
+uint16_t total = 0;
 
 void IR_init() {
+	ADC_init();
+	
 	for (uint8_t this_reading = 0; this_reading < num_readings; this_reading++) {
 		readings[this_reading] = 0;
 	}
 	
-	sensor_value = analog_read(PF0);
-	digital
+	readings[read_index] = ADC_read(PF0);
+	total = readings[read_index];
 }
 
-uint8_t IR_average_filter() {
+uint16_t IR_average_filter() {
 	total = total - readings[read_index];
 	
-	readings[read_index] = analog_read(PF0);
+	readings[read_index] = ADC_read(PF0);
+	
+	printf("ADC: %d", readings[read_index]);
 	
 	total = total + readings[read_index];
 	
@@ -35,7 +41,7 @@ uint8_t IR_average_filter() {
 		read_index = 0;
 	}
 	
-	uint8_t average = total / num_readings;
-	
+	uint16_t average = total / num_readings;
+	printf("\t\tAVG: %d\n", average);
 	return average;
 }

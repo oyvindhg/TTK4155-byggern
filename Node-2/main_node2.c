@@ -17,6 +17,8 @@
 #include "UART_driver.h"
 #include "CAN.h"
 #include "servo_driver.h"
+#include "IR_driver.h"
+#include "DAC_driver.h"
 
 void exercise_6() {
 
@@ -78,21 +80,30 @@ int main(void) {
 	
 	unsigned long clock_speed = F_CPU;
 	UART_init(clock_speed);
-	can_init(MODE_NORMAL);
+	//can_init(MODE_NORMAL);
 	
-	servo_init(clock_speed);
+	//servo_init(clock_speed);
 	
-	int servo_y = 0;
+	//IR_init();
+	
+	//int servo_y = 0;
+	
+	DAC_init();
 	
 	while(1){
 		
-		_delay_ms(10);
-		
+		_delay_ms(100);
+		/*
 		if (can_interrupt()){
 			servo_y = can_handle_messages();
 		}
 		
 		set_servo(servo_y);
+		*/
+		uint8_t volt = 255;
+		DAC_send(volt);
+		
+		
 
 	}
 

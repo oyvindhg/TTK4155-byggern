@@ -10,7 +10,9 @@
 #define IR_DRIVER_H_
 
 
+void IR_init(void);
 
+uint16_t IR_average_filter(void);
 
 
 #endif /* IR_DRIVER_H_ */
