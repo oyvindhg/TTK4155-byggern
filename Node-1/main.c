@@ -163,6 +163,28 @@ void exercise5(void) {
 	
 }
 
+void exercise6(){
+	can_message joy_pos;
+	joystick_position_t position;
+	
+	uint8_t id = 0;
+	
+	while(1){
+		position = joystick_get_position();
+		joy_pos.data[0] = position.x;
+		joy_pos.data[1] = position.y;
+		joy_pos.length = 2;
+		joy_pos.id = id;
+		
+		//printf("x: %d, y: %d\n", joy_pos.data[0], joy_pos.data[1]);
+		
+		can_message_send(&joy_pos);
+		
+		id = id + 1;
+		_delay_ms(30);
+	}
+}
+
 int main(void) {
 	
 	// -------------Define variables-------------
@@ -186,38 +208,7 @@ int main(void) {
 	
 	can_init(MODE_NORMAL);
 	
-//	uint8_t id = 1;
-	
-	can_message joy_pos;
-	joystick_position_t position;
-	
-	can_message test2;
-	test2.id		= 1338;
-	test2.data[0]	= 'W';
-	test2.data[1]	= 'o';
-	test2.data[2]	= 'r';
-	test2.data[3]	= 'l';
-	test2.data[4]	= 'd';
-	test2.length	= 5;
-	
-	can_message_send(&test2);
-	
-	uint8_t id = 0;
-	
-	while(1){
-		position = joystick_get_position();
-		joy_pos.data[0] = position.x;
-		joy_pos.data[1] = position.y;
-		joy_pos.length = 2;
-		joy_pos.id = id;
-		
-		//printf("x: %d, y: %d\n", joy_pos.data[0], joy_pos.data[1]);
-			
-		can_message_send(&joy_pos);
-		
-		id = id + 1;
-		_delay_ms(30);
-	}
+	exercise6();
 	
 	return 0;
 }
