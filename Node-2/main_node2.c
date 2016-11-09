@@ -19,6 +19,7 @@
 #include "servo_driver.h"
 #include "IR_driver.h"
 #include "DAC_driver.h"
+#include "motor_driver.h"
 
 void exercise_6() {
 
@@ -90,9 +91,15 @@ int main(void) {
 	
 	DAC_init();
 	
+	motor_init();
+	
+	int a = 0;
+	uint8_t power = 70;
+	int16_t rot = 0;
+	
 	while(1){
 		
-		_delay_ms(100);
+		_delay_ms(2000);
 		/*
 		if (can_interrupt()){
 			servo_y = can_handle_messages();
@@ -100,11 +107,23 @@ int main(void) {
 		
 		set_servo(servo_y);
 		*/
-		uint8_t volt = 255;
-		DAC_send(volt);
 		
+		if (a == 0){
+			motor_set_direction(LEFT);
+			motor_set_speed(power);
+			a = 1;
+		}
 		
-
+		else if (a == 1){
+			motor_set_direction(RIGHT);
+			motor_set_speed(power);
+			a = 0;
+		}
+		
+		//Motoren fucker seg opp etter en gang hvis dette ikke er kommentert ut. Whyyy!
+		//rot = motor_read_rotation();
+		
+		printf("Motor: %d \n", rot);
 	}
 
 }

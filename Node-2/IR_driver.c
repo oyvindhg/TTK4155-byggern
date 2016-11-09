@@ -22,14 +22,14 @@ void IR_init() {
 		readings[this_reading] = 0;
 	}
 	
-	readings[read_index] = ADC_read(PF0);
+	readings[read_index] = ADC_read();
 	total = readings[read_index];
 }
 
 uint16_t IR_average_filter() {
 	total = total - readings[read_index];
 	
-	readings[read_index] = ADC_read(PF0);
+	readings[read_index] = ADC_read();
 	
 	printf("ADC: %d", readings[read_index]);
 	
