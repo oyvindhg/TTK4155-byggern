@@ -10,10 +10,15 @@
 #include "PWM_driver.h"
 #include "bit_macros.h"
 
+/*
+
+what is this
+
 ISR(TIMER0_OVF_vect){
 	printf("\t\toverflow\n");
 }
 
+*/
 static uint16_t pwm_timer_freq;
 
 uint16_t pulse;

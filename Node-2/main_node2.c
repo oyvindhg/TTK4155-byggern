@@ -20,6 +20,7 @@
 #include "IR_driver.h"
 #include "DAC_driver.h"
 #include "motor_driver.h"
+#include "solenoid_driver.h"
 
 void exercise_6() {
 
@@ -81,17 +82,27 @@ int main(void) {
 	
 	unsigned long clock_speed = F_CPU;
 	UART_init(clock_speed);
-	//can_init(MODE_NORMAL);
 	
-	//servo_init(clock_speed);
 	
-	//IR_init();
+	printf("lol");
+	
+	can_init(MODE_NORMAL);
+	
+	servo_init(clock_speed);
+	
+	IR_init();
 	
 	//int servo_y = 0;
 	
 	DAC_init();
 	
 	motor_init();
+	
+	printf("lol");
+	
+	solenoid_init();
+	
+	printf("lol2");
 	
 	int a = 0;
 	uint8_t power = 70;
@@ -120,10 +131,12 @@ int main(void) {
 			a = 0;
 		}
 		
-		//Motoren fucker seg opp etter en gang hvis dette ikke er kommentert ut. Whyyy!
-		//rot = motor_read_rotation();
+		rot = motor_read_rotation();
 		
-		printf("Motor: %d \n", rot);
+		printf("\t\t\t\tMotor: %d \n", rot);
+		
+		solenoid_shoot();
+		
 	}
 
 }
