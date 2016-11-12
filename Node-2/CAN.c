@@ -11,6 +11,8 @@
 #include "CAN.h"
 #include "bit_macros.h"
 
+#define F_CPU 16000000UL
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/delay.h>
@@ -48,7 +50,7 @@ uint8_t can_interrupt(){
 	return 0;
 }
 
-int can_handle_messages(){
+can_message can_handle_messages(){
 	uint8_t v[2] = {0};
 	
 	can_int_vect(v);
@@ -70,30 +72,30 @@ int can_handle_messages(){
 		if (!v[1]){
 			flag = 0;
 		}
-		return message1.data[1];
+		return message1;
 	}
 	
 	can_message message2;
 	
 	if (v[1]){
-		printf("  INCOMING MESSAGE\n");
-		printf("|  buffer\t| length\t|     ID\t|\n");
-		printf("|  RXB1\t|      %u \t|   %u \t|\n\n", message2.id, message2.length);
+//		printf("  INCOMING MESSAGE\n");
+//		printf("|  buffer\t| length\t|     ID\t|\n");
+//		printf("|  RXB1\t|      %u \t|   %u \t|\n\n", message2.id, message2.length);
 		can_message_receive(1, &message2);
-		printf("  MSG:\t    |");
+//		printf("  MSG:\t    |");
 		for (uint8_t i = 0; i < message2.length; i++){
-			printf(" %d | ", message2.data[i]);
+//			printf(" %d | ", message2.data[i]);
 		}
-		printf("\n\n\n");
+//		printf("\n\n\n");
 		mcp_2515_bit_modify(MCP_CANINTF, 2, 0);
 		can_int_vect(v);
 		if (!v[0]){
 			flag = 0;
 		}
-		return message2.data[1];
+		return message2;
 	}
 	
-	return 0;
+	return message1;
 }
 
 void can_message_send(can_message* message){

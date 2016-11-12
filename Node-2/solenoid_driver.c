@@ -5,13 +5,14 @@
  *  Author: oyvindhg
  */ 
 
-#define F_CPU 16000000
+#define F_CPU 16000000UL
 
 #include "bit_macros.h"
 #include "solenoid_driver.h"
 
 #include <avr/delay.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 void solenoid_init(){
 	
@@ -21,9 +22,10 @@ void solenoid_init(){
 }
 
 void solenoid_shoot(){
-	
+	cli();
 	// Set a pulse on pin A1
 	clear_bit(PORTF, PF1);
-	_delay_ms(50);
+	_delay_ms(30);
 	set_bit(PORTF, PF1);
+	sei();
 }

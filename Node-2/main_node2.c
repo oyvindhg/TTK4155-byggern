@@ -21,6 +21,7 @@
 #include "DAC_driver.h"
 #include "motor_driver.h"
 #include "solenoid_driver.h"
+#include "game.h"
 
 void exercise_6() {
 
@@ -83,8 +84,9 @@ int main(void) {
 	unsigned long clock_speed = F_CPU;
 	UART_init(clock_speed);
 	
+	DAC_init();
 	
-	printf("lol");
+	motor_init();
 	
 	can_init(MODE_NORMAL);
 	
@@ -94,49 +96,42 @@ int main(void) {
 	
 	//int servo_y = 0;
 	
-	DAC_init();
-	
-	motor_init();
-	
-	printf("lol");
 	
 	solenoid_init();
 	
-	printf("lol2");
-	
-	int a = 0;
+	//uint8_t a = 0;
 	uint8_t power = 70;
-	int16_t rot = 0;
+	//int16_t rot = 0;
 	
-	while(1){
-		
-		_delay_ms(2000);
-		/*
-		if (can_interrupt()){
-			servo_y = can_handle_messages();
-		}
-		
-		set_servo(servo_y);
-		*/
-		
-		if (a == 0){
-			motor_set_direction(LEFT);
-			motor_set_speed(power);
-			a = 1;
-		}
-		
-		else if (a == 1){
-			motor_set_direction(RIGHT);
-			motor_set_speed(power);
-			a = 0;
-		}
-		
-		rot = motor_read_rotation();
-		
-		printf("\t\t\t\tMotor: %d \n", rot);
-		
-		solenoid_shoot();
-		
-	}
+	game_play();
+	
+// 	while(1){
+// 		
+// 		_delay_ms(2000);
+// 		/*
+// 		if (can_interrupt()){
+// 			servo_y = can_handle_messages();
+// 		}
+// 		
+// 		set_servo(servo_y);
+// 		*/
+// 		
+// // 		if (a == 0){
+// // 			motor_set_direction(LEFT);
+// // 			motor_set_speed(power);
+// // 			a = 1;
+// // 		}
+// // 		
+// // 		else if (a == 1){
+// // 			motor_set_direction(RIGHT);
+// // 			motor_set_speed(power);
+// // 			a = 0;
+// // 		}
+// 		
+// 		rot = motor_read_rotation(1);
+// 		
+// 		//solenoid_shoot();
+// 		
+// 	}
 
 }

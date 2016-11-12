@@ -14,8 +14,6 @@ void DAC_init() {
 	TWI_Master_Initialise();
 }
 
-// BURDE VI HA EGEN FUNKSJON FOR DAC_RESET OG DAC_POWER_DOWN??
-
 void DAC_send(uint8_t data) {
 	uint8_t address = 0b01010000;
 	uint8_t command = 0b0;
