@@ -37,6 +37,7 @@ SRAM capacitors page?
 #include "OLED_driver.h"
 #include "OLED_menu.h"
 #include "CAN.h"
+#include "game.h"
 
 
 void exercise1(void) {
@@ -208,7 +209,7 @@ int main(void) {
 	
 	can_init(MODE_NORMAL);
 	
-	exercise6();
+	game_play();
 	
 	return 0;
 }
