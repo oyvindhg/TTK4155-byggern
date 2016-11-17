@@ -22,10 +22,8 @@ void solenoid_init(){
 }
 
 void solenoid_shoot(){
-	cli();
 	// Set a pulse on pin A1
 	clear_bit(PORTF, PF1);
-	_delay_ms(30);
+	_delay_ms(100);
 	set_bit(PORTF, PF1);
-	sei();
 }

@@ -88,6 +88,8 @@ int main(void) {
 	
 	motor_init();
 	
+	PID_init();
+	
 	can_init(MODE_NORMAL);
 	
 	servo_init(clock_speed);

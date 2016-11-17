@@ -46,14 +46,14 @@ uint16_t IR_average_filter() {
 	return average;
 }
 
-uint8_t IR_goal_counter(uint8_t init_flag) {
+uint16_t IR_goal_counter(uint8_t init_flag) {
 	static goal_counter;
 	if (!init_flag) {
 		goal_counter = 0;
 	}
-	if (IR_average_filter() < 250) {
+	if (IR_average_filter() < 125) {
 		goal_counter = goal_counter + 1;
-		printf("\t*-----GOAL----*\n");
+		//printf("\t*-----GAME OVER----*\n");
 		return goal_counter;
 	}
 	else {

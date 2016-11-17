@@ -113,7 +113,7 @@ int16_t motor_read_rotation(uint8_t reset_flag){
 
 void motor_calibrate() {
 	motor_set_direction(LEFT);
-	motor_set_speed(70);
+	motor_set_speed(100);
 	int16_t cur_rot = motor_read_rotation(0);
 	int16_t prev_rot = cur_rot+200;
 	while(prev_rot != cur_rot) {

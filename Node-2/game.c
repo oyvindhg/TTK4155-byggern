@@ -13,6 +13,7 @@
 #include "servo_driver.h"
 #include "motor_driver.h"
 #include "solenoid_driver.h"
+#include "PID.h"
 
 void game_play() {
 	int8_t motor_pos = 0;
@@ -23,8 +24,7 @@ void game_play() {
 	uint8_t motor_flag = 0;
 	
 	int16_t rot = 0;
-	uint8_t power = 70;
-	uint8_t counter = 4;
+	uint8_t power = 80;
 	int16_t motor_ref;
 	int16_t motor_rot;
 	int16_t motor_diff;
@@ -35,18 +35,22 @@ void game_play() {
 		if (can_interrupt()){
 			joy_data = can_handle_messages();
 			motor_pos = joy_data.data[0];
-			motor_ref = (int16_t)(motor_pos*(-40)) - 4250;
-			motor_rot = motor_read_rotation(0);
-			motor_diff = -motor_ref + motor_rot;
+			PID_update_pos_ref(motor_pos);
+			//motor_ref = (int16_t)(motor_pos*(-40)) - 4250;
+			//motor_rot = motor_read_rotation(0);
+			//motor_diff = -motor_ref + motor_rot;
 // 			printf("REF: %d\n", motor_ref);
 // 			printf("CUR: %d\n", motor_rot);
-			printf("\t\t DIFF: %d\n", motor_diff);
+//			printf("\t\t DIFF: %d\n", motor_diff);
 			servo_pos = joy_data.data[1];
 			shoot = joy_data.data[2];
+			//printf("received: %d \n", shoot);
 			if (shoot) {
-				counter = counter+1;
+				solenoid_shoot();
 			}
+			set_servo(servo_pos);
 		}
+		/*
 // 		motor_ref = (int16_t)(motor_pos*(-40)) - 4250;
 // 		motor_rot = motor_read_rotation(0);
 		//motor_move(motor_diff, power);
@@ -64,14 +68,9 @@ void game_play() {
 			motor_set_speed(0);
 			motor_flag = 0;
 		}
-		
-		set_servo(servo_pos);
-		
-		if (shoot==4 && (counter>4)) {
-			solenoid_shoot();
-			counter = 0;
-		}
-		//IR_goal_counter(1);
+		*/
+		IR_goal_counter(1);
 	}
 	
 }
+
