@@ -126,7 +126,6 @@ void exercise4(void) {
 	
 }
 
-
 void exercise5(void) {
 	
 	can_init(MODE_LOOPBACK);

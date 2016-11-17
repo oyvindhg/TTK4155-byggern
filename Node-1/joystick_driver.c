@@ -135,6 +135,7 @@ int joystick_button(usb_button_t button){
 			//printf("joy: %d\n", !test_bit(PORTB, PB0));
 			return !test_bit(PINB, PINB0);
 		case LBUTTON :
+			//printf("%d", test_bit(PINB, PINB2));
 			return test_bit(PINB, PINB2);
 		case RBUTTON :
 			//printf("R: %d\n", test_bit(DDRB, PB2));
