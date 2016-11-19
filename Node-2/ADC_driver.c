@@ -11,8 +11,8 @@
 #include "ADC_driver.h"
 
 void ADC_init() {
-	// Set pin A0 to input
-	clear_bit(DDRF, PF0);
+	// Set pin A2 to input
+	clear_bit(DDRF, PF2);
 	
 	// Enable ADC
 	set_bit(ADCSRA, ADEN);
@@ -20,8 +20,9 @@ void ADC_init() {
 	set_bit(ADCSRA, ADPS0);
 	set_bit(ADCSRA, ADPS1);
 	set_bit(ADCSRA, ADPS2);
-	// Set voltage reference to 1.1V
-	set_bit(ADMUX,REFS1); clear_bit(ADMUX,REFS0);
+	// Set voltage reference to 2.56V
+	set_bit(ADMUX,REFS1);
+	set_bit(ADMUX,REFS0);
 	
 	ADC_read();	
 }
@@ -29,7 +30,8 @@ void ADC_init() {
 uint16_t ADC_read() {
 	
 	uint16_t data = 0;
-	
+	//Read from ADC2
+	set_bit(ADMUX, MUX1);
 	// Start conversion
 	set_bit(ADCSRA,ADSC);
 	// Wait for conversion complete

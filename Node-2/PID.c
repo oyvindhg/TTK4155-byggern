@@ -100,3 +100,27 @@ void PID_init(){
 void PID_update_pos_ref(int16_t pos){
 	ref_position = pos;
 }
+
+void PID_update(difficulty_t difficulty){
+	
+	switch (difficulty){
+		case EASY:
+			Kp = 2.5;
+			Ki = 2;
+			Kd = 0.1;
+			break;
+		case MEDIUM:
+			Kp = 2;
+			Ki = 4;
+			Kd = 0.1;
+			break;
+		case HARD:
+			Kp = 2;
+			Ki = 4;
+			Kd = 0.1;
+			break;
+		}
+	
+	//printf("Difficulty updated!\nKp:%f\nKi:%f\nKd:%f\n", Kp, Ki, Kd);
+	
+}

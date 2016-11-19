@@ -11,10 +11,16 @@
 
 #include "CAN_controller_driver.h"
 
+typedef enum{
+	GAME,
+	DIFFICULTY,
+	SONG
+} message_type_t;
+
 typedef struct {
 	unsigned int id;
 	uint8_t length;
-	int data[8];
+	uint8_t data[8];
 } can_message;
 
 

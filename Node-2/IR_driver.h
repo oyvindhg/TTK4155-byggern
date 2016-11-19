@@ -13,6 +13,6 @@
 void IR_init(void);
 
 uint16_t IR_average_filter(void);
-uint16_t IR_goal_counter(uint8_t);
+uint16_t IR_game_over(void);
 
 #endif /* IR_DRIVER_H_ */

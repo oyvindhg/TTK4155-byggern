@@ -106,6 +106,7 @@ int main(void) {
 	//int16_t rot = 0;
 	
 	game_play();
+	printf("GAME OVER");
 	
 // 	while(1){
 // 		

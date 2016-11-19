@@ -132,6 +132,7 @@ void can_message_send(can_message* message){
 	}
 	
 	// Request to send message, send if successful
+	//printf("sending");
 	mcp_2515_request_to_send(MCP_RTS_TX0 + buffer_number);
 	
 }

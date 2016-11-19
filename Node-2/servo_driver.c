@@ -13,8 +13,6 @@ void servo_init(unsigned long clock_speed){
 	
 	float period_sec = 0.02;
 	
-	uint16_t aaa = period_sec;
-	
 	//printf("REAL_sec: %.2f\n", period_sec);
 	
 	PWM_init(period_sec, clock_speed);

@@ -19,7 +19,6 @@ void game_play() {
 	int8_t motor_pos = 0;
 	int8_t servo_pos = 0;
 	uint8_t shoot = 0;
-	uint8_t goals = 0;
 	can_message joy_data;
 	uint8_t motor_flag = 0;
 	
@@ -28,48 +27,51 @@ void game_play() {
 	int16_t motor_ref;
 	int16_t motor_rot;
 	int16_t motor_diff;
-	//IR_goal_counter(0);
+	uint8_t score = 0;
+	uint8_t reverse_servo = 0;
+	difficulty_t diff = MEDIUM;
+	uint8_t started = 0;
 	
 	printf("\t\t*----NODE 2 BOOTED----*\n\n");
 	while(1) {
 		if (can_interrupt()){
 			joy_data = can_handle_messages();
+			
+			if (joy_data.id == DIFFICULTY){
+				diff = joy_data.data[0];
+				PID_update(diff);
+				if (diff != HARD){
+					reverse_servo = 0;
+				}
+				continue;
+			}
+			
 			motor_pos = joy_data.data[0];
 			PID_update_pos_ref(motor_pos);
-			//motor_ref = (int16_t)(motor_pos*(-40)) - 4250;
-			//motor_rot = motor_read_rotation(0);
-			//motor_diff = -motor_ref + motor_rot;
-// 			printf("REF: %d\n", motor_ref);
-// 			printf("CUR: %d\n", motor_rot);
-//			printf("\t\t DIFF: %d\n", motor_diff);
 			servo_pos = joy_data.data[1];
 			shoot = joy_data.data[2];
-			//printf("received: %d \n", shoot);
 			if (shoot) {
 				solenoid_shoot();
+				started = 1;
+				score = score + 1;
+				if (diff = HARD){
+					reverse_servo = !reverse_servo;
+				}
+			}
+			if (reverse_servo){
+				servo_pos = -servo_pos;
 			}
 			set_servo(servo_pos);
 		}
-		/*
-// 		motor_ref = (int16_t)(motor_pos*(-40)) - 4250;
-// 		motor_rot = motor_read_rotation(0);
-		//motor_move(motor_diff, power);
-		if ((motor_diff >100) && motor_flag!=1) {
-			motor_set_direction(RIGHT);
-			motor_set_speed(power);
-			motor_flag = 1;
-		}
-		else if (motor_diff <-100 && motor_flag!=2) {
-			motor_set_direction(LEFT);
-			motor_set_speed(power);
-			motor_flag = 2;
-		}
-		else if (abs(motor_diff) < 100 && (motor_flag!=0)){
-			motor_set_speed(0);
-			motor_flag = 0;
-		}
-		*/
-		IR_goal_counter(1);
+ 		if (IR_game_over() && !shoot && started){
+			//printf("score: %d", score);
+			can_message game_over;
+			game_over.id = 0;
+			game_over.length = 1;
+			game_over.data[0] = score;
+			can_message_send(&game_over);
+			started = 0;
+ 		}
 	}
 	
 }

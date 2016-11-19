@@ -10,15 +10,7 @@
 #include "PWM_driver.h"
 #include "bit_macros.h"
 
-/*
 
-what is this
-
-ISR(TIMER0_OVF_vect){
-	printf("\t\toverflow\n");
-}
-
-*/
 static uint16_t pwm_timer_freq;
 
 uint16_t pulse;
@@ -60,7 +52,7 @@ void PWM_set_period(float sec){
 
 void PWM_pulse_set(float sec) {
 	
-	uint16_t pulse = pwm_timer_freq*sec - 0.5;
+	pulse = pwm_timer_freq*sec - 0.5;
 	//printf("pulse: %u\n", pulse);
 	OCR1A = pulse;
 }

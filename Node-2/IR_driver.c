@@ -31,7 +31,7 @@ uint16_t IR_average_filter() {
 	
 	readings[read_index] = ADC_read();
 	
-	printf("ADC: %d", readings[read_index]);
+	//printf("ADC: %d\n", readings[read_index]);
 	
 	total = total + readings[read_index];
 	
@@ -42,21 +42,17 @@ uint16_t IR_average_filter() {
 	}
 	
 	uint16_t average = total / num_readings;
-	printf("\t\tAVG: %d\n", average);
+	//printf("\t\tAVG: %d\n", average);
 	return average;
 }
 
-uint16_t IR_goal_counter(uint8_t init_flag) {
-	static goal_counter;
-	if (!init_flag) {
-		goal_counter = 0;
-	}
-	if (IR_average_filter() < 125) {
-		goal_counter = goal_counter + 1;
-		//printf("\t*-----GAME OVER----*\n");
-		return goal_counter;
+uint16_t IR_game_over() {
+	//printf("AV: %d \n", IR_average_filter());
+	if (IR_average_filter() < 500) {
+		//printf("IR");
+		return 1;
 	}
 	else {
-		return goal_counter;
+		return 0;
 	}
 }
