@@ -29,7 +29,6 @@ menu_t* new_menu(char* name, menu_t* parent) {
 	menu->parent = parent;
 	menu->right_sibling = NULL;
 	menu->first_child = NULL;
-	menu->items = NULL;
 	return menu;
 }
 
@@ -53,9 +52,6 @@ menu_t *oled_menu_init(void) {
 	
 	menu_t* highscore_1 = new_menu("PAK", highscores);
 	
-	menu_t* auto_calibrate = new_menu("Auto-calibrate", calibrate_joystick);
-	menu_t* manual_calibrate = new_menu("Manual calibration", calibrate_joystick);
-	
 	menu_t* easy = new_menu("Kinder garden", set_difficulty);
 	menu_t* medium = new_menu("Acceptable", set_difficulty);
 	menu_t* hard = new_menu("Wrist breaker", set_difficulty);
@@ -63,9 +59,9 @@ menu_t *oled_menu_init(void) {
 	menu_t* byggern_poem = new_menu("Roses are red, violets are blue. Byggern is hard and so am I.", poem);
 
 	
-	set_first_child(main_menu, highscores);
-	set_right_sibling(highscores, play_game);
-	set_right_sibling(play_game, calibrate_joystick);
+	set_first_child(main_menu, play_game);
+	set_right_sibling(play_game, highscores);
+	set_right_sibling(highscores, calibrate_joystick);
 	set_right_sibling(calibrate_joystick, set_difficulty);
 	set_right_sibling(set_difficulty, debugging);
 	set_right_sibling(debugging, poem);
@@ -73,8 +69,6 @@ menu_t *oled_menu_init(void) {
 	
 	set_first_child(highscores, highscore_1);
 	
-	set_first_child(calibrate_joystick, auto_calibrate);
-	set_right_sibling(auto_calibrate, manual_calibrate);
 	
 	set_first_child(set_difficulty, easy);
 	set_right_sibling(easy, medium);
@@ -85,10 +79,11 @@ menu_t *oled_menu_init(void) {
 	current_menu = main_menu;
 	current_menu_size = size_of_menu(current_menu);
 	oled_menu_print(current_menu);
+
 	return current_menu;
 }
 
-void oled_menu_selection() {
+menu_option_t oled_menu_selection() {
 	
 	joystick_direction_t direction = joystick_get_direction();
 	
@@ -106,6 +101,7 @@ void oled_menu_selection() {
 			display_line_offset --;
 		}
 		oled_menu_print(current_menu);
+		return NONE;
 	}
 	else if (direction == DOWN) {
 		cutter = 0;
@@ -119,10 +115,29 @@ void oled_menu_selection() {
 			display_line_offset = current_line - 6;
 		}
 		oled_menu_print(current_menu);
+		return NONE;
 	}
 	else {
 		if (joystick_button(RBUTTON)) {
 			goto_menu(RBUTTON);
+			if (current_menu->title == "Play Game"){
+				return PLAY_GAME;
+				}
+			else if (current_menu->title == "Highscores"){
+				return HIGHSCORE;
+			}
+			else if (current_menu->title == "Calibrate Joystick"){
+				return AUTO_CALIBRATE;
+			}
+			else if (current_menu->title == "Kinder garden"){
+				return EASY;
+			}
+			else if (current_menu->title == "Acceptable"){
+				return MEDIUM;
+			}
+			else if (current_menu->title == "Wrist breaker"){
+				return HARD;
+			}
 		}
 		if (joystick_button(LBUTTON)) {
 			goto_menu(LBUTTON);
@@ -130,7 +145,7 @@ void oled_menu_selection() {
 		if (cutter != 0 || title_cutter != 0){
 			oled_menu_print(current_menu);
 			}
-		return;
+		return NONE;
 	}
 }
 
@@ -149,7 +164,7 @@ void goto_menu(usb_button_t button) {
 		selected_menu = current_menu->parent;
 	}
 
-	if (selected_menu == NULL || selected_menu->first_child == NULL) {
+	if (selected_menu == NULL) {
 		return;
 	} else {
 		current_menu = selected_menu;
@@ -283,6 +298,64 @@ void oled_menu_print(menu_t *menu) {
 		}
 		++line;
 		menu = menu->right_sibling;
+	}
+	
+}
+
+void oled_print_status(menu_option_t opt){
+	
+	for (int i = 2; i <=6 ; i++){
+		oled_clear_line(i);
+	}
+	
+	oled_pos(3,0);
+	char* status;
+	switch(opt){
+		case PLAY_GAME:
+			status = "HAVE FUN!";
+			oled_align_centre(status);
+			oled_printf(status);
+			break;
+		case GAME_OVER:
+			status = "GAME OVER!";
+			oled_align_centre(status);
+			oled_printf(status);
+			oled_pos(4,0);
+			status = "PLAY AGAIN?";
+			oled_align_centre(status);
+			oled_printf(status);
+			oled_pos(6,0);
+			status = "NO     /     YES";
+			oled_align_centre(status);
+			oled_printf(status);
+			break;
+		case SAVE_HIGHSCORE:
+			status = "SAVE HIGHSCORE?";
+			oled_align_centre(status);
+			oled_printf(status);
+			oled_pos(6,0);
+			status = "NO     /     YES";
+			oled_align_centre(status);
+			oled_printf(status);
+			break;
+		case HIGHSCORE:
+			oled_pos(2,0);
+			status = "HIGHSCORES:";
+			oled_align_centre(status);
+			oled_printf(status);
+			break;
+		case AUTO_CALIBRATE:
+			status = "CALIBRATED!";
+			oled_align_centre(status);
+			oled_printf(status);
+			break;
+		case EASY:
+		case MEDIUM:
+		case HARD:
+			status = "DIFFICULTY SET!";
+			oled_align_centre(status);
+			oled_printf(status);
+			break;
 	}
 	
 }

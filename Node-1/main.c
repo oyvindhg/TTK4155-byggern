@@ -38,7 +38,7 @@ SRAM capacitors page?
 #include "OLED_menu.h"
 #include "CAN.h"
 #include "game.h"
-
+#include "highscore.h"
 
 void exercise1(void) {
 	
@@ -199,16 +199,93 @@ int main(void) {
 	XMEM_init();
 	
 	ADC_init();
-	
+
 	joystick_init(prescaler_joystick_timer);
 	
 	oled_init();
-	
+
 	oled_menu_init();
-	
 	can_init(MODE_NORMAL);
 	
-	game_play();
+	printf("\t\t*----NODE 1 BOOTED----*\n\n");
+	
+	highscore_write();
+	
+	uint8_t play_again = 1;
+	uint8_t score;
+	uint8_t save_score = 1;
+	menu_option_t menu_choice;
+	while(1){
+		menu_choice = oled_menu_selection();
+		play_again = 1;
+		switch(menu_choice){
+			case PLAY_GAME:
+				while (play_again){
+					oled_print_status(PLAY_GAME);
+					score = game_play();
+					oled_print_status(GAME_OVER);
+					while (1){
+						_delay_ms(200);
+						if (joystick_button(LBUTTON)){
+							play_again = 0;
+							break;
+						}
+						else if (joystick_button(RBUTTON)){
+							play_again = 1;
+							break;
+						}
+					}
+				}
+				oled_print_status(SAVE_HIGHSCORE);
+				while (1){
+					_delay_ms(200);
+					if (joystick_button(LBUTTON)){
+						save_score = 0;
+						break;
+					}
+					else if (joystick_button(RBUTTON)){
+						save_score = 1;
+						highscore_write();
+						_delay_ms(2000);
+						break;
+					}
+				}
+			case HIGHSCORE:
+				oled_print_status(HIGHSCORE);
+				_delay_ms(2000);
+				goto_menu(LBUTTON);
+				break;
+			case AUTO_CALIBRATE:
+				joystick_auto_calibrate();
+				oled_print_status(AUTO_CALIBRATE);
+				_delay_ms(1000);
+				break;
+			case EASY:
+				send_difficulty(0);
+				oled_print_status(EASY);
+				_delay_ms(1000);
+				goto_menu(LBUTTON);
+				goto_menu(LBUTTON);
+				break;
+			case MEDIUM:
+				send_difficulty(1);
+				oled_print_status(MEDIUM);
+				_delay_ms(1000);
+				goto_menu(LBUTTON);
+				goto_menu(LBUTTON);
+				break;
+			case HARD:
+				send_difficulty(2);
+				oled_print_status(HARD);
+				_delay_ms(1000);
+				goto_menu(LBUTTON);
+				goto_menu(LBUTTON);
+				break;
+			case NONE:
+				break;
+		}
+		_delay_ms(200);
+	}
 	
 	return 0;
 }

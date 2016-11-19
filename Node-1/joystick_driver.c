@@ -46,15 +46,15 @@ ISR(TIMER0_OVF_vect){
 	//printf("Data read: %d\n",extraVar);
 	switch(contr_state){
 		case(JOYSTICK_X):
-			position.x = ((data-x_offset)*200 )/ (joy_x_V_max - joy_x_V_min);
-//			x_pos = ((data-x_offset)*200 )/ (joy_x_V_max - joy_x_V_min);			
+//			position.x = ((data-x_offset)*200 )/ (joy_x_V_max - joy_x_V_min);
+			x_pos = ((data-x_offset)*200 )/ (joy_x_V_max - joy_x_V_min);			
 			contr_state = JOYSTICK_Y;
 			channel = CHANNEL2;
 			//printf("\nX1: %d\n", position.x);
 			break;
 		case(JOYSTICK_Y):
-			position.y = ((data-y_offset)*200 )/ (joy_y_V_max - joy_y_V_min);
-//			y_pos = ((data-y_offset)*200 )/ (joy_y_V_max - joy_y_V_min);
+//			position.y = ((data-y_offset)*200 )/ (joy_y_V_max - joy_y_V_min);
+			y_pos = ((data-y_offset)*200 )/ (joy_y_V_max - joy_y_V_min);
 			contr_state = LEFT_SLIDER;
 			channel = CHANNEL3;
 //			printf("\nX1: %d", position.x);
@@ -149,7 +149,10 @@ int joystick_button(usb_button_t button){
 
 
 joystick_position_t joystick_get_position() {
- 	return position;
+ 	joystick_position_t return_pos;
+	 return_pos.x = x_pos;
+	 return_pos.y = y_pos;
+	 return return_pos ;
 }
 
 
@@ -158,11 +161,11 @@ joystick_direction_t joystick_get_direction() {
 	
 	joystick_position_t current_pos = joystick_get_position();
 	
-	int x = current_pos.x;
-	int y = current_pos.y;
+//	int x = current_pos.x;
+//	int y = current_pos.y;
 	
-//	int x = x_pos;
-//	int y = y_pos;
+	int x = x_pos;
+	int y = y_pos;
 //  	printf("\t\t\tx: %d",x);
 //  	printf("\ty: %d\n", y);
 	if (abs(x) >= abs(y)){

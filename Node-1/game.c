@@ -12,17 +12,22 @@
 #include "joystick_driver.h"
 #include "CAN.h"
 
-void game_play(){
+uint8_t game_play(){
 	can_message joy_pos;
 	joystick_position_t position;
 	int slider_r;
 	
-	uint8_t id = 0;
 	uint8_t shoot = 0;
 	uint8_t prev_shoot = 0;
-	printf("\t\t*----NODE 1 BOOTED----*\n\n");
+	can_message score;
+
 	while(1){
 		
+		if(can_interrupt() || joystick_button(JOYSTICKBUTTON)){
+			score = can_handle_messages();
+			printf("Score: %d", score.data[0]);
+			return score.data[0];
+		}
 		
 		shoot = joystick_button(RBUTTON);
 		//printf("%d", shoot);
@@ -42,14 +47,22 @@ void game_play(){
 			shoot = 0;
 		}
 		
-		printf("Sent: %d \n", shoot);
+		//printf("Sent: %d \n", shoot);
 		joy_pos.data[2] = shoot;
 		joy_pos.length = 3;
-		joy_pos.id = id;
+		joy_pos.id = GAME;
 		
 		can_message_send(&joy_pos);
 		
-		id = id + 1;
 		_delay_ms(70);
+		
 	}
+}
+
+void send_difficulty(uint8_t difficulty){
+	can_message message;
+	message.id = DIFFICULTY;
+	message.length = 1;
+	message.data[0] = difficulty;
+	can_message_send(&message);
 }

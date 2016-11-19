@@ -51,40 +51,52 @@ uint8_t can_interrupt(){
 	return 0;
 }
 
-void can_handle_messages(){
-	
-	int v[2] = {0};
+can_message can_handle_messages(){
+	uint8_t v[2] = {0};
 	
 	can_int_vect(v);
-	
 	can_message message1;
 	
 	if (v[0]){
-		printf("RXB0\n");
+		//		printf("  INCOMING MESSAGE\n");
+		//		printf("|  buffer\t| length\t|     ID\t|\n");
+		//		printf("|  RXB0\t|      %u \t|   %u \t|\n\n", message1.id, message1.length);
 		can_message_receive(0, &message1);
-		int length = message1.length;
-		printf("ID: %d\n", message1.id);
-		printf("Message: ");
-		for (uint8_t i = 0; i < length; i++){
-			printf("%c", message1.data[i]);
+		//printf("ID: %u\n", message1.id);
+		//		printf("  MSG:\t    |");
+		for (uint8_t i = 0; i < message1.length; i++){
+			//			printf(" %d |", message1.data[i]);
 		}
-		printf("\n\n");
+		//		printf("\n\n\n");
+		mcp_2515_bit_modify(MCP_CANINTF, 1, 0);
+		can_int_vect(v);
+		if (!v[1]){
+			flag = 0;
+		}
+		return message1;
 	}
 	
-	can_int_vect(v);
 	can_message message2;
 	
 	if (v[1]){
-		printf("RXB1\n");
-		printf("Message: ");
+		//		printf("  INCOMING MESSAGE\n");
+		//		printf("|  buffer\t| length\t|     ID\t|\n");
+		//		printf("|  RXB1\t|      %u \t|   %u \t|\n\n", message2.id, message2.length);
 		can_message_receive(1, &message2);
+		//		printf("  MSG:\t    |");
 		for (uint8_t i = 0; i < message2.length; i++){
-			printf("%c", message2.data[i]);
+			//			printf(" %d | ", message2.data[i]);
 		}
-		printf("\n\n");
+		//		printf("\n\n\n");
+		mcp_2515_bit_modify(MCP_CANINTF, 2, 0);
+		can_int_vect(v);
+		if (!v[0]){
+			flag = 0;
+		}
+		return message2;
 	}
 	
-	mcp_2515_bit_modify(MCP_CANINTF, 3, 0);
+	return message1;
 }
 
 void can_message_send(can_message* message){

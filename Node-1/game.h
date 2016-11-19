@@ -10,7 +10,9 @@
 #define GAME_H_
 
 
-void game_play(void);
+uint8_t game_play(void);
+
+void send_difficulty(uint8_t);
 
 
 #endif /* GAME_H_ */

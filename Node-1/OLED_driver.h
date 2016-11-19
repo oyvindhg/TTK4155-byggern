@@ -15,7 +15,6 @@ void oled_inv_printf(char* data, ...);
 int oled_put_char(unsigned char);
 int oled_inv_put_char(unsigned char c);
 
-//Fuck this shit so hard
 //void oled_line_print(char* data);
 //void oled_inv_line_print(char* data);
 
