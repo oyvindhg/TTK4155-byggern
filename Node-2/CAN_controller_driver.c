@@ -11,6 +11,10 @@
 #include <avr/io.h>
 #include <avr/delay.h>
 
+#ifndef F_CPU 
+#define	F_CPU 16000000UL
+#endif
+
 void mcp_activate_slave(){
 	/* Activate Slave Select */
 	clear_bit(PORTB, PB7);

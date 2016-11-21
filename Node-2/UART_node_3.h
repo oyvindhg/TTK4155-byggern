@@ -12,8 +12,5 @@ void UART_init_3(unsigned long clock_speed);
 int put_char_3(unsigned char c);
 int get_char_3(void);
 
-#endif /* MAX233_DRIVER_H_ */
-
-
 
 #endif /* UART_NODE_3_H_ */

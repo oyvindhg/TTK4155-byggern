@@ -53,6 +53,5 @@ void PWM_set_period(float sec){
 void PWM_pulse_set(float sec) {
 	
 	pulse = pwm_timer_freq*sec - 0.5;
-	//printf("pulse: %u\n", pulse);
 	OCR1A = pulse;
 }

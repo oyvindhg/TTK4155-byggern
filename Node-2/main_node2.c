@@ -99,55 +99,7 @@ int main(void) {
 	
 	IR_init();
 	
-	//int servo_y = 0;
-	
 	solenoid_init();
 	
-	//uint8_t a = 0;
-	uint8_t power = 70;
-	//int16_t rot = 0;
-	
 	game_play();
-	printf("GAME OVER");
-	
-	while(1){
-		
-		_delay_ms(2000);
-		/*
-		if (can_interrupt()){
-			servo_y = can_handle_messages();
-		}
-		
-		set_servo(servo_y);
-		*/
-		
-// 		if (a == 0){
-// 			motor_set_direction(LEFT);
-// 			motor_set_speed(power);
-// 			a = 1;
-// 		}
-// 		
-// 		else if (a == 1){
-// 			motor_set_direction(RIGHT);
-// 			motor_set_speed(power);
-// 			a = 0;
-// 		}
-		
-		rot = motor_read_rotation(1);
-		
-		//solenoid_shoot();
-		
-	}
-// unsigned char receive;
-// 		receive = 2;
-// 		put_char_3(receive);
-// 		_delay_ms(1000);
-// 		receive = 1;
-// 		printf("first\n");
-// 		put_char_3(receive);
-// 		receive = 0;
-// 		printf("second\n");
-// 		_delay_ms(1000);
-// 		put_char_3(receive);
-// 		printf("third\n");
 }

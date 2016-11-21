@@ -21,7 +21,6 @@ volatile uint8_t flag = 0;
 
 
 ISR(INT2_vect){
-	//printf("int\n");
 	flag = 1;
 }
 
@@ -57,16 +56,7 @@ can_message can_handle_messages(){
 	can_message message1;
 	
 	if (v[0]){
-//		printf("  INCOMING MESSAGE\n");
-//		printf("|  buffer\t| length\t|     ID\t|\n");
-//		printf("|  RXB0\t|      %u \t|   %u \t|\n\n", message1.id, message1.length);
 		can_message_receive(0, &message1);
-		//printf("ID: %u\n", message1.id);
-//		printf("  MSG:\t    |");
-		for (uint8_t i = 0; i < message1.length; i++){
-//			printf(" %d |", message1.data[i]);
-		}
-//		printf("\n\n\n");
 		mcp_2515_bit_modify(MCP_CANINTF, 1, 0);
 		can_int_vect(v);
 		if (!v[1]){
@@ -78,15 +68,7 @@ can_message can_handle_messages(){
 	can_message message2;
 	
 	if (v[1]){
-//		printf("  INCOMING MESSAGE\n");
-//		printf("|  buffer\t| length\t|     ID\t|\n");
-//		printf("|  RXB1\t|      %u \t|   %u \t|\n\n", message2.id, message2.length);
 		can_message_receive(1, &message2);
-//		printf("  MSG:\t    |");
-		for (uint8_t i = 0; i < message2.length; i++){
-//			printf(" %d | ", message2.data[i]);
-		}
-//		printf("\n\n\n");
 		mcp_2515_bit_modify(MCP_CANINTF, 2, 0);
 		can_int_vect(v);
 		if (!v[0]){
@@ -132,7 +114,6 @@ void can_message_send(can_message* message){
 	}
 	
 	// Request to send message, send if successful
-	//printf("sending");
 	mcp_2515_request_to_send(MCP_RTS_TX0 + buffer_number);
 	
 }

@@ -15,6 +15,7 @@
 #include "solenoid_driver.h"
 #include "PID.h"
 #include "UART_node_3.h"
+#include "IR_driver.h"
 
 void game_play() {
 	int8_t motor_pos = 0;
@@ -35,7 +36,9 @@ void game_play() {
 	uint8_t music;
 	
 	printf("\t\t*----NODE 2 BOOTED----*\n\n");
+	
 	while(1) {
+		// Handle new action
 		if (can_interrupt()){
 			joy_data = can_handle_messages();
 			
@@ -51,8 +54,10 @@ void game_play() {
 			if (joy_data.id == SONG) {
 				music = joy_data.data[0];
 				put_char_3(music);
+				continue;
 				
 			}
+
 			motor_pos = joy_data.data[0];
 			PID_update_pos_ref(motor_pos);
 			servo_pos = joy_data.data[1];
@@ -70,8 +75,9 @@ void game_play() {
 			}
 			set_servo(servo_pos);
 		}
+		
+		// Trigger if game over. Play tune, stop game
  		if (IR_game_over() && !shoot && started){
-			//printf("score: %d", score);
 			put_char_3(0);
 			can_message game_over;
 			game_over.id = 0;
@@ -79,7 +85,8 @@ void game_play() {
 			game_over.data[0] = score;
 			can_message_send(&game_over);
 			started = 0;
+			score = 0;
  		}
+		 
 	}
-	
 }

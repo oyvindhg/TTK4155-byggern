@@ -5,8 +5,6 @@
  *  Author: Whiskey dicks
  */
 
-// Er URSEL 0 by default?? altså skrive til UBRRH
-
 // UART = Universal Asynchronous Receiver/Transmitter
 
 #include <stdio.h>
@@ -19,15 +17,15 @@
 void UART_init(unsigned long clock_speed){
 	
 	unsigned long baud = BAUD;
-	unsigned char ubrr = (clock_speed / (baud * 16)) - 1;	//Should be, and is, 31
+	unsigned char ubrr = (clock_speed / (baud * 16)) - 1;
 	
 	/* Set baud rate */
 	UBRR0H = ubrr >> 8;			// Save the most significant bits (4 most sign. bits out of 12 bits)
 	UBRR0L = ubrr;				// Save the least sign. bits (8 least sign. bits)
 	
 	/* Set frame format: 8data, 2stop bit */
-	UCSR0C = (1<<USBS0);		// USBS: 1 = Use 2 stop bits, not 1												!!!! REMEMBER THAT URSEL0 MUST BE SET FOR EVERY PIN CHANGE
-	UCSR0C = (3<<UCSZ00);		// UCSZ00: 3 - UCSZ0 and UCSZ1 defines 8 bits (11 binary) for each character	!!!! REMEMBER THAT URSEL0 MUST BE SET FOR EVERY PIN CHANGE
+	UCSR0C = (1<<USBS0);		// USBS: 1 = Use 2 stop bits, not 1												
+	UCSR0C = (3<<UCSZ00);		// UCSZ00: 3 - UCSZ0 and UCSZ1 defines 8 bits (11 binary) for each character	
 	
 	/* Enable receiver and transmitter */
 	set_bit(UCSR0B,RXEN0);		//RXEN enables the receiver.

@@ -27,11 +27,10 @@ void IR_init() {
 }
 
 uint16_t IR_average_filter() {
+	
 	total = total - readings[read_index];
 	
 	readings[read_index] = ADC_read();
-	
-	//printf("ADC: %d\n", readings[read_index]);
 	
 	total = total + readings[read_index];
 	
@@ -42,14 +41,11 @@ uint16_t IR_average_filter() {
 	}
 	
 	uint16_t average = total / num_readings;
-	//printf("\t\tAVG: %d\n", average);
 	return average;
 }
 
 uint16_t IR_game_over() {
-	//printf("AV: %d \n", IR_average_filter());
-	if (IR_average_filter() < 500) {
-		//printf("IR");
+	if (IR_average_filter() < 200) {
 		return 1;
 	}
 	else {

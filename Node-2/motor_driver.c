@@ -78,7 +78,6 @@ int16_t motor_read_rotation(uint8_t reset_flag){
 	 |  We don't know why, perhaps faulty motor box?   |
 	 *-------------------------------------------------*/
 	
-	
 	//Set !OE low to enable output of encoder
 	clear_bit(PORTH, PH5);
 	

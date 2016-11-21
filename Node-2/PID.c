@@ -30,9 +30,6 @@ double dt = 0.016;
 
 ISR(TIMER2_OVF_vect){
 	
-	//printf("%f\n", integral);
-	
-	
 	int16_t motor_rot = motor_read_rotation(0);
 	double measured = (motor_rot + motor_middle) / (-motor_middle/100);
 	
@@ -120,7 +117,4 @@ void PID_update(difficulty_t difficulty){
 			Kd = 0.1;
 			break;
 		}
-	
-	//printf("Difficulty updated!\nKp:%f\nKi:%f\nKd:%f\n", Kp, Ki, Kd);
-	
 }

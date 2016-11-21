@@ -12,11 +12,7 @@
 void servo_init(unsigned long clock_speed){
 	
 	float period_sec = 0.02;
-	
-	//printf("REAL_sec: %.2f\n", period_sec);
-	
 	PWM_init(period_sec, clock_speed);
-	
 	PWM_pulse_set(0.0015);
 	
 }
@@ -30,7 +26,6 @@ void set_servo(int servo_dir){
 	float dir = (float)servo_dir;
 	
 	float servo_pw = dir/200000.0 + 0.0015;
-	//printf("\t\tservo_pw: %.5f\n", servo_pw);
 	
 	if (servo_pw < min_pw) {
 		servo_pw = min_pw;
