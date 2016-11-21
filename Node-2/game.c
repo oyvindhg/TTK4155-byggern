@@ -46,6 +46,7 @@ void game_play() {
 				continue;
 			}
 			
+			
 			motor_pos = joy_data.data[0];
 			PID_update_pos_ref(motor_pos);
 			servo_pos = joy_data.data[1];
@@ -54,7 +55,7 @@ void game_play() {
 				solenoid_shoot();
 				started = 1;
 				score = score + 1;
-				if (diff = HARD){
+				if (diff == HARD){
 					reverse_servo = !reverse_servo;
 				}
 			}
