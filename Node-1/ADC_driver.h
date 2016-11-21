@@ -11,7 +11,7 @@
 
 void ADC_init(void);
 
-typedef enum {CHANNEL1, CHANNEL2, CHANNEL3, CHANNEL4} channel_t; //Begynner enum på 0 eller 1? Må vi definere selv?
+typedef enum {CHANNEL1, CHANNEL2, CHANNEL3, CHANNEL4} channel_t;
 
 char ADC_get_data(void);
 

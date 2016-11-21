@@ -8,23 +8,13 @@
 
  Tip for debug of a variable: Use volatile when initializing the variable, then press Start Debugging and Break. Then add the variable to the watch-list after right clicking it. Now it can be viewed in debug mode.
  
-
-SPØRSMÅL:
-
-Decoupling capacitors. Er de blå ok?
-
-Low-pass filter on ALE signal. Schematic on STK501???
-
-SRAM capacitors page?
-
-
-*/ 
+*/
 
 #ifndef F_CPU
 #define F_CPU 4915200UL	//This is just a macro, it has no data type.
 #endif
 
-#include <avr/io.h>		//This is also included in UART_driver.h. Should we remove it from here?
+#include <avr/io.h>		
 #include <util/delay.h>
 #include <stdio.h>
 
@@ -40,6 +30,7 @@ SRAM capacitors page?
 #include "game.h"
 #include "highscore.h"
 
+/*
 void exercise1(void) {
 	
 	//UART
@@ -184,14 +175,11 @@ void exercise6(){
 		_delay_ms(30);
 	}
 }
+*/
 
 int main(void) {
 	
-	// -------------Define variables-------------
-	
-	int prescaler_joystick_timer = 1024;	//Only this? Is it necessary?
-	
-	// ------------------------------------------
+	int prescaler_joystick_timer = 1024;
 
 	unsigned long clock_speed = F_CPU;
 	
@@ -207,25 +195,30 @@ int main(void) {
 	oled_menu_init();
 	can_init(MODE_NORMAL);
 	
-	printf("\t\t*----NODE 1 BOOTED----*\n\n");
+	//--------------
+	//EEPROM_reset(12);
+	//--------------
 	
-	highscore_write();
+	highscore_init();
+	
 	
 	uint8_t play_again = 1;
 	uint8_t score;
-	uint8_t save_score = 1;
 	menu_option_t menu_choice;
+	char name[4] = "   \0";
+	can_message song;
 	while(1){
 		menu_choice = oled_menu_selection();
 		play_again = 1;
 		switch(menu_choice){
 			case PLAY_GAME:
+			
 				while (play_again){
 					oled_print_status(PLAY_GAME);
 					score = game_play();
 					oled_print_status(GAME_OVER);
 					while (1){
-						_delay_ms(200);
+						_delay_ms(400);
 						if (joystick_button(LBUTTON)){
 							play_again = 0;
 							break;
@@ -236,30 +229,38 @@ int main(void) {
 						}
 					}
 				}
-				oled_print_status(SAVE_HIGHSCORE);
-				while (1){
-					_delay_ms(200);
-					if (joystick_button(LBUTTON)){
-						save_score = 0;
-						break;
-					}
-					else if (joystick_button(RBUTTON)){
-						save_score = 1;
-						highscore_write();
-						_delay_ms(2000);
-						break;
+				
+				if (check_score(200)){
+					oled_print_status(SAVE_HIGHSCORE);
+					while (1){
+						_delay_ms(200);
+						if (joystick_button(LBUTTON)){
+							break;
+						}
+						else if (joystick_button(RBUTTON)){
+							_delay_ms(200);
+							create_nickname(name);
+							insert_score(name, score);
+							break;
+						}
 					}
 				}
-			case HIGHSCORE:
-				oled_print_status(HIGHSCORE);
+				
+				print_highscore();
 				_delay_ms(2000);
 				goto_menu(LBUTTON);
 				break;
+				
+			case HIGHSCORE:
+				print_highscore();
+				break;
+				
 			case AUTO_CALIBRATE:
 				joystick_auto_calibrate();
 				oled_print_status(AUTO_CALIBRATE);
 				_delay_ms(1000);
 				break;
+				
 			case EASY:
 				send_difficulty(0);
 				oled_print_status(EASY);
@@ -267,6 +268,7 @@ int main(void) {
 				goto_menu(LBUTTON);
 				goto_menu(LBUTTON);
 				break;
+				
 			case MEDIUM:
 				send_difficulty(1);
 				oled_print_status(MEDIUM);
@@ -274,6 +276,7 @@ int main(void) {
 				goto_menu(LBUTTON);
 				goto_menu(LBUTTON);
 				break;
+				
 			case HARD:
 				send_difficulty(2);
 				oled_print_status(HARD);
@@ -281,6 +284,28 @@ int main(void) {
 				goto_menu(LBUTTON);
 				goto_menu(LBUTTON);
 				break;
+				
+			case ZELDA:
+				song.id = 2;
+				song.length = 1;
+				song.data[0] = 0;
+				can_message_send(&song);
+				break;
+				
+			case MARIO:
+				song.id = 2;
+				song.length = 1;
+				song.data[0] = 1;
+				can_message_send(&song);
+				break;
+				
+			case UW:
+				song.id = 2;
+				song.length = 1;
+				song.data[0] = 2;
+				can_message_send(&song);
+				break;
+				
 			case NONE:
 				break;
 		}

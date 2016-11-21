@@ -11,9 +11,6 @@
 #include <avr/io.h>
 #include <avr/delay.h>
 
-// Ok to clear_bit and set_bit PB4 in SPI?
-// How can it recognize MCP_RESET without including MCP2515.h?
-
 void mcp_activate_slave(){
 	/* Activate Slave Select */
 	clear_bit(PORTB, PB4);
@@ -49,9 +46,7 @@ uint8_t mcp_2515_init(uint8_t mode){
 	
 	if(mode_bits != mode){
 		
-		//Actually WTF, hvorfor senker det hele programmet?
 		printf("MCP2515 is NOT in correct mode after reset! Its config bits are %x\n", mode_bits);
-		
 		printf("\n!\n");
 		return 1;
 	}

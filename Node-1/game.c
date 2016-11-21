@@ -25,7 +25,7 @@ uint8_t game_play(){
 		
 		if(can_interrupt() || joystick_button(JOYSTICKBUTTON)){
 			score = can_handle_messages();
-			printf("Score: %d", score.data[0]);
+			//printf("Score: %d", score.data[0]);
 			return score.data[0];
 		}
 		
@@ -50,18 +50,18 @@ uint8_t game_play(){
 		//printf("Sent: %d \n", shoot);
 		joy_pos.data[2] = shoot;
 		joy_pos.length = 3;
-		joy_pos.id = GAME;
+		joy_pos.id = 0;
 		
 		can_message_send(&joy_pos);
 		
-		_delay_ms(70);
+		_delay_ms(80);
 		
 	}
 }
 
 void send_difficulty(uint8_t difficulty){
 	can_message message;
-	message.id = DIFFICULTY;
+	message.id = 1;
 	message.length = 1;
 	message.data[0] = difficulty;
 	can_message_send(&message);

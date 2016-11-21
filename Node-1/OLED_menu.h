@@ -2,7 +2,7 @@
  * OLED_menu.h
  *
  * Created: 06.10.2016 11:15:16
- *  Author: perakj
+ *  Author: whiskey dick
  */ 
 
 
@@ -27,7 +27,10 @@ typedef enum{
 	AUTO_CALIBRATE,
 	EASY,
 	MEDIUM,
-	HARD
+	HARD,
+	ZELDA,
+	MARIO,
+	UW
 	} menu_option_t;
 
 menu_option_t oled_menu_selection(void);

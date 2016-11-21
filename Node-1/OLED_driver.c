@@ -110,34 +110,6 @@ void oled_inv_printf(char* data, ...){
 	
 }
 
-//void oled_line_print(char* data){
-	//printf("data: %s\n", data);
-	//if (position.col + strlen(data)*fontSize > 127){
-		//printf("data2: %s\n", data);
-		////printf("ITS HERE: %d", position.col + strlen("Highscore"));
-		//char newString[strlen(data)*fontSize];
-		//sprintf(newString, "%s", data);
-		//printf("newString: %s\n", newString);
-		//printf("data4: \n");
-		////oled_inv_printf(newString);
-		////printf(newString);
-	//}
-	//else{
-		//oled_printf(data);
-	//}
-//}
-//
-//void oled_inv_line_print(char* data){
-	//if (position.col + strlen(data)*fontSize > 127){
-		//char* newString;
-		//sprintf(newString, data, 127/fontSize);
-		//oled_inv_printf(newString);
-	//}
-	//else{
-		//oled_inv_printf(data);
-	//}
-//}
-
 int long_string(char* data){
 	if (strlen(data)*fontSize > 128){
 		return 1;
@@ -181,12 +153,7 @@ void oled_init(){
 
 void oled_reset(){
 	
-	//int line = 0;
-	
-	//printf("\nLINE: %d\n", line);
-	
 	for (int line = 0; line < 8; line++) {
-		//printf("\nline: %d", line);
 		oled_clear_line(line);
 	}
 	oled_home();
@@ -241,7 +208,7 @@ void oled_clear_line(int line){
 	for (int col = 0; col < 128; col++) {
 		write_data(0b00000000);
 	}
-	oled_goto_line(line);	// siden horizontal mode
+	oled_goto_line(line);
 }
 
 void oled_fill_line(int line){

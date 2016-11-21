@@ -16,51 +16,42 @@
 #include "bit_macros.h"
 
 
-volatile joystick_position_t position;		//husk å enable joystick_get_position()
+volatile joystick_position_t position;
 volatile int x_pos;
 volatile int y_pos;
 volatile sliders_position_t sliders;
 volatile state contr_state;
 
-volatile int joy_x_V_min = 0;
-volatile int joy_x_V_max = 255;
-volatile int joy_y_V_min = 0;
-volatile int joy_y_V_max = 255;
+uint8_t joy_x_V_min = 0;
+uint8_t joy_x_V_max = 255;
+uint8_t joy_y_V_min = 0;
+uint8_t joy_y_V_max = 255;
 
 volatile int x_offset;
 volatile int y_offset;
 
-volatile int slide_left_V_min = 0;
-volatile int slide_left_V_max = 255;
-volatile int slide_right_V_min = 0;
-volatile int slide_right_V_max = 255;
+uint8_t slide_left_V_min = 0;
+uint8_t slide_left_V_max = 255;
+uint8_t slide_right_V_min = 0;
+uint8_t slide_right_V_max = 255;
 
 
 // timer0 overflow
 ISR(TIMER0_OVF_vect){
-	//printf("\t\toverflow\n");
 	channel_t channel;
 	char data_char = get_ADC_data();
 	int32_t data = (int32_t)data_char;
 	
-	//printf("Data read: %d\n",extraVar);
 	switch(contr_state){
 		case(JOYSTICK_X):
-//			position.x = ((data-x_offset)*200 )/ (joy_x_V_max - joy_x_V_min);
 			x_pos = ((data-x_offset)*200 )/ (joy_x_V_max - joy_x_V_min);			
 			contr_state = JOYSTICK_Y;
 			channel = CHANNEL2;
-			//printf("\nX1: %d\n", position.x);
 			break;
 		case(JOYSTICK_Y):
-//			position.y = ((data-y_offset)*200 )/ (joy_y_V_max - joy_y_V_min);
 			y_pos = ((data-y_offset)*200 )/ (joy_y_V_max - joy_y_V_min);
 			contr_state = LEFT_SLIDER;
 			channel = CHANNEL3;
-//			printf("\nX1: %d", position.x);
-//			printf("\tY1: %d\n", position.y);
-// 			printf("\nX1: %d", x_pos);
-// 			printf("\tY1: %d\n", y_pos);
 			break;
 		case(LEFT_SLIDER):
 			sliders.left = (data * 200)/ (slide_left_V_max - slide_left_V_min)  - 100;
@@ -92,7 +83,7 @@ void joystick_init(int prescaler){
 	
 	// Button inputs:
 	clear_bit(DDRB, PB0);	//Joystick button
-	set_bit(PORTB, PB0);		//Set pull-up resistor
+	set_bit(PORTB, PB0);	//Set pull-up resistor
 	clear_bit(DDRB, PB1);	//Right button
 	clear_bit(DDRB, PB2);	//Left button
 	
@@ -132,13 +123,10 @@ int joystick_button(usb_button_t button){
 	
 	switch (button) {
 		case JOYSTICKBUTTON :
-			//printf("joy: %d\n", !test_bit(PORTB, PB0));
 			return !test_bit(PINB, PINB0);
 		case LBUTTON :
-			//printf("%d", test_bit(PINB, PINB2));
 			return test_bit(PINB, PINB2);
 		case RBUTTON :
-			//printf("R: %d\n", test_bit(DDRB, PB2));
 			return test_bit(PINB, PINB1);
 		default:
 			printf("Not valid button");
@@ -157,17 +145,12 @@ joystick_position_t joystick_get_position() {
 
 
 joystick_direction_t joystick_get_direction() {
-	//printf("\tPOS.Y1: %d\n",position.y);
 	
 	joystick_position_t current_pos = joystick_get_position();
 	
-//	int x = current_pos.x;
-//	int y = current_pos.y;
-	
 	int x = x_pos;
 	int y = y_pos;
-//  	printf("\t\t\tx: %d",x);
-//  	printf("\ty: %d\n", y);
+
 	if (abs(x) >= abs(y)){
 		if (abs(x) < 10){
 			return NEUTRAL;
@@ -181,15 +164,12 @@ joystick_direction_t joystick_get_direction() {
 	} 
 	else{
 		if (abs(y) < 65){
-/*			printf("\t\t\tPOS.Y2: %d\n",position.y);*/
 			return NEUTRAL;
 		}
 		else if (y < 0){
-/*			printf("\t\t\tPOS.Y2: %d\n",position.y);*/
 			return DOWN;
 		}
 		else {
-/*			printf("\t\t\tPOS.Y2: %d\n",position.y);*/
 			return UP;
 		}
 	}

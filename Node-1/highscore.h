@@ -9,7 +9,19 @@
 #ifndef HIGHSCORE_H_
 #define HIGHSCORE_H_
 
-void highscore_write();
+typedef struct {
+	char name[3];
+	uint8_t score;
+} highscore;
+
+void read_score(highscore* hs, int8_t mem_loc);
+void write_score(highscore hs, int8_t mem_loc);
+void highscore_init();
+void print_highscore();
+uint8_t check_score(uint8_t);
+void insert_score(char* name, uint8_t score);
+uint8_t check_score(uint8_t score);
+void create_nickname();
 
 
 

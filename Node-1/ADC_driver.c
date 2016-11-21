@@ -20,17 +20,9 @@
 volatile char* ext_adc = ADC_ADDRESS;	//Create a pointer to the array of all addresses we will write to. ADC starting at 0x1400.
 volatile char ADC_data;
 
-/*
-Chip select settes lav hele tiden, kan det være et problem?
-*/
-
-//volatile int new_data = 0;
-
 ISR(INT1_vect){
 	
 	ADC_data = ext_adc[0x00];
-	
-//	new_data = 1;
 }
 
 void ADC_init(void){
@@ -52,11 +44,6 @@ void ADC_init(void){
 }
 
 char get_ADC_data(void){
-// 	printf("hei\n");
-// 	while(!new_data){printf("DEN ER FOR TREIG");}
-// 	new_data = 0;
-	//printf("get data\n");
-	//printf("Return data %d\n",ADC_data);
 	return ADC_data;
 }
 
