@@ -4,7 +4,7 @@
 
 **Course content:** Design of embedded computer systems. Computer architectures and system components for embedded and industrial applications. Microcontrollers and specialized microprocessors. Parallel and serial bus systems. Datacommunication in industrial environments. Analog/digital interfaces.
 
-**Project:** In this course, we had a large term project where we created a computer controller electromechanical ping pong game. The main challenge was to assemble the hardware components and develop the software for the microcontrollers, making a fully functional embedded computer system that enabled us to play a refreshing game of ping pong! The project was divided into nine parts, that we did more-or-less on a week-to-week basis: 
+**Project:** In this course, we had a large term project where we created a computer controlled electromechanical ping pong game. The main challenge was to assemble the hardware components and develop the software for the microcontrollers, making a fully functional embedded computer system that enabled us to play a refreshing game of ping pong! The project was divided into nine parts, that we did more-or-less on a week-to-week basis: 
 
   - **Part 1** - Initial assembly of microcontroller and RS-232
   - **Part 2** - Address decoding and external RAM
